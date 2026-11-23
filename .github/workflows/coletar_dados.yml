@@ -17,7 +17,7 @@ on:
         description: "Amostra: 1 = âncoras do Reel-base, 2 inclui zonas de apoio"
         type: choice
         options: ["1", "2"]
-        default: "1"
+        default: "2"
 
 permissions:
   contents: read
@@ -40,7 +40,7 @@ jobs:
           python -m pytest -q
 
       - name: Coletar e normalizar
-        run: python -m scripts.collect_live output/snapshot.json --tier ${{ inputs.tier || '1' }}
+        run: python -m scripts.collect_live output/snapshot.json --tier ${{ inputs.tier || '2' }}
 
       - name: Gerar Stories com o visual aprovado
         run: python -m src.previsao.render.stories output/snapshot.json output/stories
@@ -60,13 +60,20 @@ jobs:
           print(f"- Reel de alerta liberado: "
                 f"{'sim' if c['gates']['allow_alert_reel'] else 'NÃO'}")
           print(f"- fallback usado: {'sim' if d['fallback_used'] else 'não'}\n")
-          print("| local | zona | mín | máx | chuva | janela |")
+          print("| local | zona | mín | máx | chuva (mm) | janela |")
           print("|---|---|---|---|---|---|")
           for e in d['forecast']['today']['locations']:
               w = e['rain_window']
-              janela = f"{w['start']}–{w['end']} (pico {w['peak_probability_pct']}%)" if w else "—"
+              janela = "—"
+              if w:
+                  janela = f"{w['start']}–{w['end']}"
+                  if w.get('peak_mm') is not None:
+                      janela += f" (pico {w['peak_mm']} mm)"
+                  elif w.get('peak_probability_pct') is not None:
+                      janela += f" (pico {w['peak_probability_pct']}%)"
+              volume = e.get('rain_mm')
               print(f"| {e['name']} | {e['zone']} | {e['min_c']}° | {e['max_c']}° | "
-                    f"{e['rain_probability_pct']}% | {janela} |")
+                    f"{volume if volume is not None else '—'} | {janela} |")
           print("\n### Fontes\n")
           for s in d['sources']:
               print(f"- `{s['name']}`: {s['status']}"

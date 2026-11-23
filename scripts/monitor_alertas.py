@@ -7,6 +7,7 @@ import unicodedata
 
 from defusedxml import ElementTree as SafeXML
 import requests
+import yaml
 
 from src.previsao import config, estado
 
@@ -70,6 +71,31 @@ def ler_cap(xml, cidades, agora, parametros):
     return alertas
 
 
+def roteiro_oficial(aviso):
+    inicio = datetime.fromisoformat(aviso['inicio']).astimezone(estado.fuso())
+    fim = datetime.fromisoformat(aviso['fim']).astimezone(estado.fuso())
+    evento = aviso['evento']
+    cidades = ', '.join(aviso['cidades'])
+    periodo = f"{inicio:%d/%m às %H:%M} até {fim:%d/%m às %H:%M}"
+    return {
+        'tipo': 'alerta', 'apresenta': 'bia', 'validade': aviso['fim'],
+        'titulo': f'AVISO DE {evento.upper()}',
+        'etiquetas': ['AVISO OFICIAL DO INMET', f'ATÉ {fim:%d/%m %H:%M}'],
+        'fonte': aviso['fonte'],
+        'ticker': aviso['cidades'],
+        'falas': [
+            {'cena': 'abertura', 'fala': f'O Inmet emitiu um aviso de {evento.lower()} para municípios de Minas Gerais.'},
+            {'cena': 'alerta', 'titulo': evento.upper(),
+             'detalhe': f'{len(aviso["cidades"])} municípios monitorados',
+             'fala': f'O aviso é válido de {periodo}. Veja os municípios no rodapé e confirme os detalhes na fonte oficial.'},
+            {'cena': 'cta', 'chamada': 'CONFIRA O AVISO OFICIAL', 'sub': 'INMET',
+             'fala': 'Consulte o aviso do Inmet para acompanhar a atualização e as orientações para a sua cidade.'},
+        ],
+        'legenda': f'Aviso do INMET: {evento}. Validade: {periodo}. Municípios monitorados: {cidades}. '
+                   f'Fonte: {aviso["fonte"]} · {estado.arroba()}',
+    }
+
+
 def main():
     agora = datetime.now(estado.fuso())
     cidades = {str(loc['ibge']): loc['name'] for loc in config.locations_by_tier(2)}
@@ -90,6 +116,11 @@ def main():
     saida.write_text(json.dumps(dict(checagem=agora.isoformat(), alertas=alertas),
                                 indent=2, ensure_ascii=False))
     print(f'{len(alertas)} avisos oficiais elegíveis em Minas Gerais')
+    if alertas:
+        ordem = ('ciclone', 'granizo', 'tempestade', 'chuva_intensa', 'vendaval')
+        selecionado = min(alertas, key=lambda a: (ordem.index(a['tipo']), a['inicio']))
+        saida.with_name('roteiro_alerta_mg.yml').write_text(
+            yaml.safe_dump(roteiro_oficial(selecionado), allow_unicode=True, sort_keys=False))
 
 
 if __name__ == '__main__':

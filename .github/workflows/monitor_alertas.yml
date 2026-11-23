@@ -11,7 +11,7 @@ concurrency:
 jobs:
   monitorar:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -19,9 +19,30 @@ jobs:
           python-version: '3.12'
       - run: pip install -r requirements/test.txt
       - run: python -m scripts.monitor_alertas >> "$GITHUB_STEP_SUMMARY"
+      - name: Verificar elegibilidade da prévia
+        id: previa
+        run: |
+          if test -s output/roteiro_alerta_mg.yml; then
+            echo 'render=true' >> "$GITHUB_OUTPUT"
+          fi
+      - uses: ./.github/actions/setup-hyperframes
+        if: steps.previa.outputs.render == 'true'
+      - name: Renderizar prévia sem publicação
+        if: steps.previa.outputs.render == 'true'
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q ffmpeg espeak-ng
+          pip install -r requirements/comunicado.txt
+          python hyperframes/comunicado_dupla.py output/roteiro_alerta_mg.yml --out output/ALERTA.mp4
+          python scripts/qa_video.py output/ALERTA.mp4
       - uses: actions/upload-artifact@v4
+        if: always() && hashFiles('output/alertas_mg.json') != ''
         with:
           name: evidencias-alertas-mg
-          path: output/alertas_mg.json
+          path: |
+            output/alertas_mg.json
+            output/roteiro_alerta_mg.yml
+            output/ALERTA.mp4
+            output/CAPA.jpg
           if-no-files-found: error
           retention-days: 3

@@ -51,6 +51,6 @@ o maior acumulado entre os pontos com dados válidos. Coordenadas das 24 sedes
 conferidas no [cadastro de localidades do IBGE, Censo 2022](https://www.ibge.gov.br/geociencias/organizacao-do-territorio/estrutura-territorial/27385-localidades).
 
 O monitor consulta os avisos CAP do INMET às 11h de Brasília e guarda evidências
-com município, tipo, validade e fonte. Se a consulta falhar, a execução falha
+com município, tipo, validade e fonte. Quando há aviso elegível, o workflow também renderiza uma prévia do comunicado. Se a consulta falhar, a execução falha
 sem converter indisponibilidade em indicação de tempo seguro. A automação de
 envio dos avisos ao Instagram depende da integração do novo canal.
