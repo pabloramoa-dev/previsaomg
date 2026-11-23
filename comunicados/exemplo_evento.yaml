@@ -1,0 +1,36 @@
+# EXEMPLO de AGENDA / divulgação em dupla: um cartaz por evento. Confira data,
+# horário, local e preço na fonte oficial do evento antes de publicar.
+tipo: evento
+apresenta: bia
+validade: "2026-11-22T20:00"
+titulo: "AGENDA DO FERIADÃO"
+etiquetas: ["DE GRAÇA OU QUASE", "20 A 22 NOV"]
+fonte: "sites oficiais dos eventos"
+ticker: ["FESTIVAL GRÁTIS NO CENTRO", "SAMBA EM BANGU", "SHOW GRÁTIS NO LEBLON"]
+falas:
+  - cena: abertura
+    fala: "Oi, gente! Separamos o que fazer no feriadão, com muita coisa de graça."
+  - cena: cartaz
+    rotulo: "SEX A DOM"
+    nome: "Nome do evento 1"
+    quando: "20 a 22/11 · 8h às 13h"
+    onde: "Local · Bairro"
+    detalhe: "Atrações e feira"
+    selo: "GRÁTIS"
+    fala: "Valeu, Bia! De sexta a domingo tem o evento 1, de graça, das 8 às 13 horas."
+  - cena: cartaz
+    rotulo: "SEXTA"
+    nome: "Nome do evento 2"
+    quando: "Sexta, 20/11 · 17h"
+    onde: "Local · Bairro"
+    selo: "A PARTIR DE R$ 40"
+    fala: "Na sexta, o evento 2, com ingressos a partir de 40 reais."
+  - cena: cta
+    chamada: "MANDE PRA SUA TURMA"
+    sub: "{arroba} · agenda do fim de semana"
+    fala: "Manda pra quem vai curtir o feriadão com você!"
+legenda: |
+  🎉 AGENDA DO FERIADÃO
+  📍 Evento 1 — grátis
+  📍 Evento 2 — a partir de R$ 40
+  Confira horários e ingressos nos sites oficiais. {arroba}

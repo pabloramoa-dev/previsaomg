@@ -1,0 +1,23 @@
+# EXEMPLO de LEMBRETE / aviso em dupla (campanha, data importante, parceiro).
+tipo: lembrete
+apresenta: bira
+validade: "2026-12-31T23:59"
+titulo: "NÃO ESQUECE!"
+etiquetas: ["LEMBRETE", "ESTA SEMANA"]
+falas:
+  - cena: abertura
+    fala: "Bom dia! Passando rapidinho pra um lembrete importante."
+  - cena: cartaz
+    rotulo: "LEMBRETE"
+    nome: "O que lembrar"
+    quando: "Até sexta-feira"
+    onde: "Onde fazer"
+    selo: "ÚLTIMOS DIAS"
+    fala: "Isso mesmo, Bira. Até sexta dá pra resolver, sem fila."
+  - cena: cta
+    chamada: "MANDE PRA QUEM PRECISA"
+    sub: "{arroba}"
+    fala: "Manda pra quem precisa lembrar disso!"
+legenda: |
+  🔔 LEMBRETE — o que lembrar, até sexta-feira.
+  Manda pra quem precisa! {arroba}

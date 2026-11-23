@@ -1,0 +1,368 @@
+name: Reel da noite
+
+# Publicação diária (18:00 do fuso do canal): Bia com a previsão de AMANHÃ.
+# O Reel da manhã (6h, Bira com a previsão de hoje) é o `reel_manha.yml`.
+# Cada turno tem a sua trava e só conta as publicações do próprio turno.
+#
+# COMO FUNCIONA O HORÁRIO (hora LOCAL do canal; o fuso vem de FUSO_UTC)
+#
+#   ALVO - 25 min  gatilho externo (cron-job.org -> repository_dispatch)
+#   ALVO - 20 min  PREPARO: coleta a previsão atual, escolhe a pauta,
+#                  renderiza, faz o QA e guarda o vídeo (artifact)
+#   ALVO           publica o vídeo que já está pronto
+#   PRAZO          disparo automático depois disso não publica mais
+#
+# O job espera sozinho entre os marcos (scripts/aguardar_horario.py). Disparo
+# manual (botão "Run workflow") não espera nada.
+#
+# RESERVA. O `schedule` do GitHub atrasa ou descarta execuções, então ele não
+# é o gatilho principal. Os dois crons abaixo rodam DEPOIS do alvo (ALVO+25 e
+# ALVO+85 min): se o turno já publicou, a `trava` encerra em segundos; se não
+# publicou, preparam e publicam na hora, sem espera. Nenhum job fica horas
+# parado segurando um runner — com dezenas de canais na mesma conta, isso
+# estouraria o limite de jobs simultâneos do GitHub.
+#
+# Contra Reel repetido, três camadas: o job `trava` (fila versionada), o
+# `escolher_pauta --exigir-inedito-hoje` e o `publish.cli`, que recusa legenda
+# já publicada. Todos os disparos caem no mesmo grupo de concorrência e rodam
+# um de cada vez; o checkout sempre pega a ponta da main.
+#
+# Chave geral: a variable AUTOMATION_ENABLED. Sem ela igual a 'true', nada
+# roda. É o rollback de um clique, sem editar arquivo.
+#
+# As linhas marcadas com "gerado:" são reescritas por scripts/novo_estado.py
+# (fuso e grupo de horário do canal). Não editar à mão sem atualizar
+# config/estado.yaml.
+
+on:
+  schedule:
+    - cron: "35 20 * * *"   # preparação antes do horário local
+    - cron: "25 21 * * *"   # gerado: reserva 1 (ALVO+25 em UTC)
+    - cron: "25 22 * * *"   # gerado: reserva 2 (ALVO+85 em UTC)
+  # GATILHO PRINCIPAL: cron-job.org, 25 minutos antes do ALVO no fuso do canal,
+  # chama POST /repos/:owner/:repo/dispatches {"event_type":"reel_noite"} com
+  # um token fine-grained só deste repo (Contents: write). Ver docs/HORARIOS.md.
+  repository_dispatch:
+    types: [reel_noite]
+  workflow_dispatch:
+    inputs:
+      publicar:
+        description: "Publicar no Instagram do canal? Desmarcado = só artifact"
+        type: boolean
+        default: false
+      ignorar_trava:
+        description: "Publicar mesmo que já tenha saído Reel hoje"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+# Marcos do turno, na hora LOCAL do canal.
+env:
+  ALVO: "18:00"        # gerado: alvo do turno
+  PREPARO_MIN: "20"
+  PRAZO: "21:00"
+  FUSO_UTC: "-3"       # gerado: igual a fuso_utc de config/estado.yaml
+
+# Mesmo grupo do publicar_manual.yml: nunca dois publicadores ao mesmo tempo.
+concurrency:
+  group: canal-publicacao
+  cancel-in-progress: false
+
+jobs:
+  # Job separado, e não um passo: o que ele evita é justamente o custo dos
+  # passos seguintes (apt, pip, Manim, Kokoro). Nas tentativas de cron em que
+  # já saiu Reel, a execução inteira termina em segundos.
+  trava:
+    if: vars.AUTOMATION_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      pular: ${{ steps.conferir.outputs.pular }}
+      publicar: ${{ steps.conferir.outputs.publicar }}
+    steps:
+      # Sempre a ponta da main, e NÃO o commit do disparo: um agendamento
+      # atrasado que ficou esperando na fila de concorrência carregaria a fila
+      # editorial antiga (sem o Reel que acabou de sair) e as três travas
+      # deixariam passar um Reel repetido.
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - name: Já saiu Reel hoje?
+        id: conferir
+        env:
+          EVENTO: ${{ github.event_name }}
+          IN_PUBLICAR: ${{ inputs.publicar }}
+          IN_IGNORAR: ${{ inputs.ignorar_trava }}
+        run: |
+          python3 - <<'PY'
+          import datetime, json, os, pathlib
+
+          # As caixinhas do disparo manual só existem no disparo manual. Em cron
+          # e em repository_dispatch não há `inputs`, e a combinação A && B || C
+          # do GitHub devolve C quando B é false — "não publicar" viraria
+          # "publicar". Por isso a decisão é tomada aqui, em Python.
+          manual = os.environ['EVENTO'] == 'workflow_dispatch'
+          publicar = os.environ.get('IN_PUBLICAR', '') != 'false' if manual else True
+          ignorar = manual and os.environ.get('IN_IGNORAR', '') == 'true'
+
+          hoje = datetime.datetime.now(
+              datetime.timezone(datetime.timedelta(hours=int(os.environ['FUSO_UTC'])))).date().isoformat()
+
+          fila = pathlib.Path('data/editorial_queue.json')
+          itens = json.loads(fila.read_text(encoding='utf-8')) if fila.exists() else []
+          # Só conta o turno da NOITE: o Reel da manhã (Bira, previsão do
+          # dia) não trava este Reel.
+          ja = [i for i in itens
+                if i.get('status') == 'published'
+                and str(i.get('published_at', ''))[:10] == hoje
+                and i.get('format') == 'amanha_no_estado']
+
+          # Disparo automático fora do prazo não publica: a previsão do turno
+          # já perdeu o sentido. O disparo manual decide por conta própria.
+          agora = datetime.datetime.now(
+              datetime.timezone(datetime.timedelta(hours=int(os.environ['FUSO_UTC']))))
+          hh, mm = (int(x) for x in os.environ['PRAZO'].split(':'))
+          atrasado = not manual and agora > agora.replace(
+              hour=hh, minute=mm, second=0, microsecond=0)
+
+          pular = 'sim' if ((ja and not ignorar) or atrasado) else 'nao'
+          print(f'hoje={hoje} agora={agora:%H:%M} pular={pular} '
+                f'publicar={publicar} publicacoes_hoje={len(ja)} '
+                f'fora_do_prazo={atrasado}')
+          with open(os.environ['GITHUB_OUTPUT'], 'a', encoding='utf-8') as saida:
+              saida.write(f'pular={pular}\n')
+              saida.write(f'publicar={str(publicar).lower()}\n')
+
+          resumo = pathlib.Path(os.environ['GITHUB_STEP_SUMMARY'])
+          if atrasado and not ja:
+              resumo.write_text(
+                  f'### Disparo às {agora:%H:%M}, depois do prazo ({os.environ["PRAZO"]})\n\n'
+                  'Nada foi preparado nem publicado. Para publicar mesmo assim, '
+                  'use o botão "Run workflow".\n', encoding='utf-8')
+          elif pular == 'sim':
+              resumo.write_text(
+                  f'### Reel da noite de {hoje} já publicado\n\n'
+                  f'- formato: `{ja[-1].get("format")}`\n'
+                  f'- media_id: `{ja[-1].get("media_id")}`\n\n'
+                  'Esta tentativa de cron encerrou sem falar com a Meta.\n',
+                  encoding='utf-8')
+          PY
+
+  reel:
+    needs: trava
+    if: needs.trava.outputs.pular != 'sim'
+    runs-on: ubuntu-latest
+    # Disparo principal espera no máximo ~25 min; a reserva não espera.
+    timeout-minutes: 75
+    env:
+      # O roteiro fala da hora em que o Reel vai ao ar, não da hora do render.
+      PREVISAO_HORA_ALVO: "18"
+      # Visual do Reel: colagem de papel (vox) por padrão. Para voltar ao
+      # visual anterior sem editar arquivo, crie a variable
+      # PREVISAO_ESTILO=classico em Settings > Variables.
+      PREVISAO_ESTILO: ${{ vars.PREVISAO_ESTILO || 'vox' }}
+      PREVISAO_MOTOR: ${{ vars.PREVISAO_MOTOR || 'hyperframes' }}
+    steps:
+      # Sempre a ponta da main, e NÃO o commit do disparo: um agendamento
+      # atrasado que ficou esperando na fila de concorrência carregaria a fila
+      # editorial antiga (sem o Reel que acabou de sair) e as três travas
+      # deixariam passar um Reel repetido.
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+
+      - name: Dependências
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q ffmpeg espeak-ng libpango1.0-dev libcairo2-dev pkg-config
+          mkdir -p ~/.local/share/fonts/poppins
+          for f in Poppins-Bold.ttf Poppins-Regular.ttf; do
+            curl -fsSL --retry 3 -o ~/.local/share/fonts/poppins/$f https://raw.githubusercontent.com/google/fonts/main/ofl/poppins/$f
+          done
+          fc-cache -f
+          pip install -r requirements/test.txt -r requirements/characters.txt
+
+      - name: Preparar HyperFrames
+        uses: ./.github/actions/setup-hyperframes
+      - name: Isolamento e testes
+        run: |
+          python scripts/isolation_guard.py
+          python -m pytest -q
+
+      - name: Aguardar a hora de preparar (ALVO - PREPARO_MIN)
+        if: github.event_name != 'workflow_dispatch'
+        run: python -m scripts.aguardar_horario preparar --alvo "$ALVO" --antes "$PREPARO_MIN"
+
+      - name: Coletar a previsão atual
+        run: python -m scripts.collect_live output/snapshot.json
+
+      - name: Avaliar pautas e atualizar a fila
+        run: python -m scripts.editorial_scan output/snapshot.json --out data/editorial_queue.json
+
+      # Segunda camada da trava: aqui a fila já está atualizada pelo scan.
+      - name: Escolher a pauta do dia
+        id: pauta
+        run: |
+          python -m scripts.escolher_pauta \
+            --queue data/editorial_queue.json \
+            --out output/pauta.json \
+            --turno noite \
+            --exigir-inedito-hoje
+
+      - name: Registrar por que não houve Reel
+        if: steps.pauta.outputs.seguir != 'sim'
+        run: |
+          {
+            echo "### Sem Reel nesta execução"
+            echo "Motivo: \`${{ steps.pauta.outputs.motivo }}\`"
+            echo "Nada foi enviado à Meta."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      # --------------------------------------------------------------- Reel
+
+      - name: Render com a pauta escolhida
+        if: steps.pauta.outputs.seguir == 'sim'
+        run: |
+          # Estúdio HyperFrames (Reel inteiro em HTML). Reserva sem editar
+          # arquivo: variável PREVISAO_MOTOR=manim em Settings > Variables.
+          if [ "$PREVISAO_MOTOR" = manim ]; then
+            motor=(python -m src.previsao.render.characters.pipeline)
+          else
+            motor=(python hyperframes/gerar_hf.py)
+          fi
+          "${motor[@]}" \
+            --snapshot output/snapshot.json \
+            --personagem "${{ steps.pauta.outputs.personagem }}" \
+            --format "${{ steps.pauta.outputs.formato }}" \
+            --topico "${{ steps.pauta.outputs.topico }}" \
+            --out output/REEL.mp4
+
+      - name: Legenda da mesma pauta
+        if: steps.pauta.outputs.seguir == 'sim'
+        run: python -m scripts.build_caption output/snapshot.json output/LEGENDA.txt --pauta output/pauta.json
+
+      - name: QA
+        if: steps.pauta.outputs.seguir == 'sim'
+        run: python scripts/qa_video.py output/REEL.mp4
+
+      - name: Mostrar pauta, roteiro e legenda no resumo
+        if: steps.pauta.outputs.seguir == 'sim'
+        run: |
+          {
+            echo "## Pauta"
+            echo "- formato: \`${{ steps.pauta.outputs.formato }}\`"
+            echo "- tópico: \`${{ steps.pauta.outputs.topico }}\`"
+            echo "- apresentador: \`${{ steps.pauta.outputs.personagem }}\`"
+            echo "- dedupe_key: \`${{ steps.pauta.outputs.dedupe_key }}\`"
+            echo '## Legenda'
+            echo '```'
+            cat output/LEGENDA.txt 2>/dev/null || echo '(sem legenda)'
+            echo '```'
+            echo '## Roteiro falado'
+            echo '```'
+            cat output/work_*/roteiro.txt 2>/dev/null || echo '(sem roteiro)'
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v4
+        if: steps.pauta.outputs.seguir == 'sim'
+        with:
+          name: reel-${{ github.run_id }}
+          path: output/
+          retention-days: 14
+
+      # ---------------------------------------------------------- publicação
+
+      # O vídeo já está pronto e guardado no artifact: aqui só se espera a hora.
+      - name: Aguardar o horário de publicar (ALVO)
+        if: ${{ steps.pauta.outputs.seguir == 'sim' && needs.trava.outputs.publicar == 'true' && github.event_name != 'workflow_dispatch' }}
+        run: python -m scripts.aguardar_horario publicar --alvo "$ALVO"
+
+      - name: Verificar Meta e conta de destino
+        if: ${{ steps.pauta.outputs.seguir == 'sim' && needs.trava.outputs.publicar == 'true' }}
+        env:
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          META_GRAPH_VERSION: ${{ vars.META_GRAPH_VERSION || 'v26.0' }}
+          EXPECTED_IG_USERNAME: ${{ vars.EXPECTED_IG_USERNAME }}
+        run: python -c "from src.previsao.publish.instagram import verify_destination; print('destino:',verify_destination().get('username'))"
+
+      - name: Exigir repositório público para o Release que a Meta vai baixar
+        if: ${{ steps.pauta.outputs.seguir == 'sim' && needs.trava.outputs.publicar == 'true' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          V=$(gh repo view "${{ github.repository }}" --json visibility -q .visibility)
+          test "$V" = "PUBLIC" || { echo "PUBLICAÇÃO BLOQUEADA: Release de repo privado não é URL pública para a Meta."; exit 1; }
+
+      - name: Hospedar MP4 em Release temporário
+        if: ${{ steps.pauta.outputs.seguir == 'sim' && needs.trava.outputs.publicar == 'true' }}
+        id: media
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="reel-noite-${{ github.run_id }}"
+          ARQS="output/REEL.mp4"
+          [ -f output/CAPA.jpg ] && ARQS="$ARQS output/CAPA.jpg"
+          gh release create "$TAG" $ARQS --title "$TAG" --notes "Reel da noite do canal"
+          echo "url=https://github.com/${{ github.repository }}/releases/download/$TAG/REEL.mp4" >> "$GITHUB_OUTPUT"
+          if [ -f output/CAPA.jpg ]; then
+            echo "capa=https://github.com/${{ github.repository }}/releases/download/$TAG/CAPA.jpg" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Publicar o Reel do dia
+        if: ${{ steps.pauta.outputs.seguir == 'sim' && needs.trava.outputs.publicar == 'true' }}
+        env:
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          META_GRAPH_VERSION: ${{ vars.META_GRAPH_VERSION || 'v26.0' }}
+          EXPECTED_IG_USERNAME: ${{ vars.EXPECTED_IG_USERNAME }}
+          PREVISAO_CAPA_URL: ${{ steps.media.outputs.capa }}
+        run: |
+          export PREVISAO_CAPA_MS=$(cat output/capa_ms.txt 2>/dev/null || echo 0)
+          python -m src.previsao.publish.cli \
+            --video-url "${{ steps.media.outputs.url }}" \
+            --caption-file output/LEGENDA.txt \
+            --queue data/editorial_queue.json \
+            --dedupe-key "${{ steps.pauta.outputs.dedupe_key }}" \
+            --publish
+
+      # A fila é o estado do publicador: precisa ser gravada mesmo quando a
+      # publicação falhou no meio, senão o item fica 'publishing' só no runner.
+      - name: Persistir a fila no repositório
+        if: ${{ always() && steps.pauta.outputs.seguir == 'sim' }}
+        run: |
+          set -euo pipefail
+          test -f data/editorial_queue.json || { echo "sem fila para persistir"; exit 0; }
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/editorial_queue.json
+          if git diff --cached --quiet; then
+            echo "fila sem mudanca"
+            exit 0
+          fi
+          git commit -m "Fila editorial: estado apos execucao ${{ github.run_id }}"
+          git pull --rebase --autostash origin "$GITHUB_REF_NAME"
+          git push origin "HEAD:$GITHUB_REF_NAME"
+
+      # O MP4 só precisa existir enquanto a Meta baixa. Guardar um Release por
+      # dia para sempre enche o repositório de mídia que ninguém usa.
+      - name: Apagar Releases de Reel com mais de 7 dias
+        if: ${{ always() && needs.trava.outputs.publicar == 'true' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          LIMITE=$(date -u -d '7 days ago' +%Y-%m-%dT%H:%M:%SZ)
+          gh release list --repo "${{ github.repository }}" --limit 100 \
+            --json tagName,createdAt \
+            --jq ".[] | select(.createdAt < \"$LIMITE\") | select(.tagName | test(\"^(reel|pilot)-\")) | .tagName" \
+          | while read -r TAG; do
+              [ -z "$TAG" ] && continue
+              echo "apagando release $TAG"
+              gh release delete "$TAG" --repo "${{ github.repository }}" --cleanup-tag --yes
+            done

@@ -1,0 +1,27 @@
+name: Monitorar avisos oficiais de Minas Gerais
+on:
+  schedule:
+    - cron: '0 14 * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: monitor-alertas-mg
+  cancel-in-progress: false
+jobs:
+  monitorar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -r requirements/test.txt
+      - run: python -m scripts.monitor_alertas >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: evidencias-alertas-mg
+          path: output/alertas_mg.json
+          if-no-files-found: error
+          retention-days: 3

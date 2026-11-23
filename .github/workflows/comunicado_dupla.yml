@@ -1,0 +1,131 @@
+name: Comunicado em dupla
+
+# Reel AVULSO com Bira e Bia, sob pedido: alerta de tempo, agenda de eventos,
+# divulgação ou lembrete. O conteúdo sai de um roteiro YAML em comunicados/
+# (veja comunicados/README.md). Não tem horário: só roda quando alguém aperta
+# "Run workflow".
+#
+# Por padrão gera só o vídeo (artifact) para conferir. Marque "publicar" para
+# mandar ao Instagram do canal. Roteiro vencido (campo `validade`) não roda.
+
+on:
+  workflow_dispatch:
+    inputs:
+      roteiro:
+        description: "Arquivo do roteiro (ex.: comunicados/alerta_hoje.yaml)"
+        type: string
+        required: true
+      publicar:
+        description: "Publicar no Instagram do canal? Desmarcado = somente artifact"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: canal-publicacao
+  cancel-in-progress: false
+
+jobs:
+  comunicado:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    permissions:
+      contents: write
+    env:
+      ROTEIRO: ${{ inputs.roteiro }}
+      PUBLICAR: ${{ inputs.publicar && vars.AUTOMATION_ENABLED == 'true' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - name: Preparar HyperFrames
+        uses: ./.github/actions/setup-hyperframes
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+
+      - name: Dependências
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q ffmpeg espeak-ng
+          pip install -r requirements/test.txt -r requirements/comunicado.txt
+
+      - name: Conferir o roteiro
+        run: |
+          test -f "$ROTEIRO" || { echo "Roteiro não encontrado: $ROTEIRO"; exit 1; }
+          python hyperframes/comunicado_dupla.py "$ROTEIRO" --so-validar
+
+      - name: Renderizar o comunicado
+        run: python hyperframes/comunicado_dupla.py "$ROTEIRO" --out output/REEL.mp4
+
+      - name: Mostrar roteiro e legenda no resumo
+        run: |
+          {
+            echo "## Roteiro falado"; echo '```'; cat output/work_comunicado/roteiro.txt; echo '```'
+            echo "## Legenda"; echo '```'; cat output/LEGENDA.txt; echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: QA
+        run: python scripts/qa_video.py output/REEL.mp4
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: comunicado-${{ github.run_id }}
+          path: |
+            output/REEL.mp4
+            output/CAPA.jpg
+            output/LEGENDA.txt
+            output/work_comunicado/roteiro.txt
+          retention-days: 14
+
+      # ---------------------------------------------------------- publicação
+
+      - name: Verificar Meta e conta de destino
+        if: ${{ env.PUBLICAR == 'true' }}
+        env:
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          META_GRAPH_VERSION: ${{ vars.META_GRAPH_VERSION || 'v26.0' }}
+          EXPECTED_IG_USERNAME: ${{ vars.EXPECTED_IG_USERNAME }}
+        run: python -c "from src.previsao.publish.instagram import verify_destination; print('destino:',verify_destination().get('username'))"
+
+      - name: Exigir repositório público para Release usado pela Meta
+        if: ${{ env.PUBLICAR == 'true' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          V=$(gh api "repos/${{ github.repository }}" --jq .visibility)
+          test "$V" = "public" || { echo "PUBLICAÇÃO BLOQUEADA: Release de repo privado não é URL pública para a Meta."; exit 1; }
+
+      - name: Hospedar MP4 em Release temporário
+        if: ${{ env.PUBLICAR == 'true' }}
+        id: media
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="comunicado-${{ github.run_id }}"
+          gh release create "$TAG" output/REEL.mp4 output/CAPA.jpg --title "$TAG" --notes "Comunicado em dupla"
+          echo "url=https://github.com/${{ github.repository }}/releases/download/$TAG/REEL.mp4" >> "$GITHUB_OUTPUT"
+          echo "capa=https://github.com/${{ github.repository }}/releases/download/$TAG/CAPA.jpg" >> "$GITHUB_OUTPUT"
+
+      - name: Publicar
+        if: ${{ env.PUBLICAR == 'true' }}
+        env:
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          META_GRAPH_VERSION: ${{ vars.META_GRAPH_VERSION || 'v26.0' }}
+          EXPECTED_IG_USERNAME: ${{ vars.EXPECTED_IG_USERNAME }}
+          PREVISAO_CAPA_URL: ${{ steps.media.outputs.capa }}
+        run: |
+          export PREVISAO_CAPA_MS=$(cat output/capa_ms.txt 2>/dev/null || echo 0)
+          python -m src.previsao.publish.cli \
+            --video-url "${{ steps.media.outputs.url }}" \
+            --caption-file output/LEGENDA.txt \
+            --publish
+
+      - name: Apagar o Release temporário
+        if: ${{ always() && env.PUBLICAR == 'true' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release delete "comunicado-${{ github.run_id }}" --cleanup-tag --yes || true

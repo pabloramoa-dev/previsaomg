@@ -1,0 +1,111 @@
+# Identidade do canal. Gerado por scripts/novo_estado.py no repositorio-modelo.
+# Pode ser editado a mao; rode `python -m scripts.validar_estado` depois.
+versao: 1
+uf: MG
+nome: Minas Gerais
+curto: Minas
+artigo: ''
+regiao_id: estado_mg
+marca: PREVISÃO MG
+marca_falada: Previsão MG
+handle: previsaomg
+slogan: O tempo de Minas para decidir seu dia.
+repo: pabloramoa-dev/previsaomg
+fuso_utc: -3
+timezone: America/Sao_Paulo
+recorte:
+  lat_min: -23.15
+  lat_max: -13.97
+  lon_min: -50.99
+  lon_max: -39.64
+litoral: false
+cenario: interior
+ticker: MINAS
+titulos:
+  antes_de_sair: MINAS ANTES DE SAIR
+  amanha_no_estado: AMANHÃ EM MINAS
+apresentadores:
+  bira:
+    cargo: TEMPO EM MINAS
+  bia:
+    cargo: O TEMPO DE AMANHÃ EM MINAS
+hashtags:
+  padrao: '#PrevisaoMG #MinasGerais #TempoMG'
+  antes_de_sair: '#PrevisaoMG #MinasGerais #TempoMG'
+  chove_onde: '#PrevisaoMG #ChuvaMG #TempoMG'
+  fim_de_semana: '#PrevisaoMG #FimDeSemana #MinasGerais'
+  vai_dar_praia: '#PrevisaoMG #Praia #MinasGerais'
+  vai_ao_jogo: '#PrevisaoMG #MinasGerais #TempoMG'
+  amanha_no_estado: '#PrevisaoMG #TempoAmanha #MinasGerais'
+legenda:
+  abrangencia: em Minas
+  unidade: cidade
+formatos_desligados:
+- vai_ao_jogo
+- vai_dar_praia
+- chove_onde
+- fim_de_semana
+regioes:
+- rotulo: Grande BH
+  ids:
+  - belo_horizonte
+  - contagem
+  - betim
+  zonas:
+  - z_grande_bh
+- rotulo: Triângulo
+  ids:
+  - uberlandia
+  - uberaba
+  - araguari
+  zonas:
+  - z_triangulo
+- rotulo: Zona da Mata
+  ids:
+  - juiz_de_fora
+  - vicosa
+  - muriae
+  zonas:
+  - z_zona_da_mata
+- rotulo: Sul de Minas
+  ids:
+  - pocos_de_caldas
+  - varginha
+  - pouso_alegre
+  zonas:
+  - z_sul_de_minas
+- rotulo: Norte
+  ids:
+  - montes_claros
+  - janauba
+  - pirapora
+  zonas:
+  - z_norte
+- rotulo: Vale do Rio Doce
+  ids:
+  - governador_valadares
+  - ipatinga
+  - caratinga
+  zonas:
+  - z_vale_do_rio_doce
+- rotulo: Jequitinhonha e Mucuri
+  ids:
+  - teofilo_otoni
+  - aracuai
+  - diamantina
+  zonas:
+  - z_jequitinhonha_e_mucuri
+- rotulo: Centro-Oeste e Alto Paranaíba
+  ids:
+  - divinopolis
+  - patos_de_minas
+  - araxa
+  zonas:
+  - z_centro_oeste_e_alto_paranaiba
+falado: {}
+preposicoes:
+  na: []
+  'no': []
+  nas: []
+  nos: []
+destaques_semana: []

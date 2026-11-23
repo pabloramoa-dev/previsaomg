@@ -1,0 +1,446 @@
+# Pontos do canal: sedes municipais (IBGE). sample_tier 1 = ancora de
+# todo Reel; 2 = reserva da mesma regiao. Gerado por scripts/novo_estado.py.
+meta:
+  version: 1
+  region: estado_mg
+  timezone: America/Sao_Paulo
+  updated_at: null
+  source_note: "IBGE, Localidades do Brasil, Censo 2022. Pontos de referência das sedes municipais, em graus decimais."
+municipalities:
+  belo_horizonte:
+    name: Belo Horizonte
+    uf: MG
+  contagem:
+    name: Contagem
+    uf: MG
+  betim:
+    name: Betim
+    uf: MG
+  uberlandia:
+    name: Uberlândia
+    uf: MG
+  uberaba:
+    name: Uberaba
+    uf: MG
+  araguari:
+    name: Araguari
+    uf: MG
+  juiz_de_fora:
+    name: Juiz de Fora
+    uf: MG
+  vicosa:
+    name: Viçosa
+    uf: MG
+  muriae:
+    name: Muriaé
+    uf: MG
+  pocos_de_caldas:
+    name: Poços de Caldas
+    uf: MG
+  varginha:
+    name: Varginha
+    uf: MG
+  pouso_alegre:
+    name: Pouso Alegre
+    uf: MG
+  montes_claros:
+    name: Montes Claros
+    uf: MG
+  janauba:
+    name: Janaúba
+    uf: MG
+  pirapora:
+    name: Pirapora
+    uf: MG
+  governador_valadares:
+    name: Governador Valadares
+    uf: MG
+  ipatinga:
+    name: Ipatinga
+    uf: MG
+  caratinga:
+    name: Caratinga
+    uf: MG
+  teofilo_otoni:
+    name: Teófilo Otoni
+    uf: MG
+  aracuai:
+    name: Araçuaí
+    uf: MG
+  diamantina:
+    name: Diamantina
+    uf: MG
+  divinopolis:
+    name: Divinópolis
+    uf: MG
+  patos_de_minas:
+    name: Patos de Minas
+    uf: MG
+  araxa:
+    name: Araxá
+    uf: MG
+zones:
+  z_grande_bh:
+    name: Grande BH
+    municipality: null
+    coastal: false
+    decisions:
+    - calor
+    - chuva
+    - deslocamento
+  z_triangulo:
+    name: Triângulo
+    municipality: null
+    coastal: false
+    decisions:
+    - calor
+    - chuva
+    - deslocamento
+  z_zona_da_mata:
+    name: Zona da Mata
+    municipality: null
+    coastal: false
+    decisions:
+    - calor
+    - chuva
+    - deslocamento
+  z_sul_de_minas:
+    name: Sul de Minas
+    municipality: null
+    coastal: false
+    decisions:
+    - calor
+    - chuva
+    - deslocamento
+  z_norte:
+    name: Norte
+    municipality: null
+    coastal: false
+    decisions:
+    - calor
+    - chuva
+    - deslocamento
+  z_vale_do_rio_doce:
+    name: Vale do Rio Doce
+    municipality: null
+    coastal: false
+    decisions:
+    - calor
+    - chuva
+    - deslocamento
+  z_jequitinhonha_e_mucuri:
+    name: Jequitinhonha e Mucuri
+    municipality: null
+    coastal: false
+    decisions:
+    - calor
+    - chuva
+    - deslocamento
+  z_centro_oeste_e_alto_paranaiba:
+    name: Centro-Oeste e Alto Paranaíba
+    municipality: null
+    coastal: false
+    decisions:
+    - calor
+    - chuva
+    - deslocamento
+locations:
+- id: belo_horizonte
+  name: Belo Horizonte
+  zone: z_grande_bh
+  municipality: belo_horizonte
+  type: city
+  latitude: -19.9237
+  longitude: -43.9363
+  aliases:
+  - belo horizonte
+  sample_tier: 1
+  spatial_fit: alto
+  ibge: 3106200
+- id: contagem
+  name: Contagem
+  zone: z_grande_bh
+  municipality: contagem
+  type: city
+  latitude: -19.9192
+  longitude: -44.0928
+  aliases:
+  - contagem
+  sample_tier: 2
+  spatial_fit: medio
+  ibge: 3118601
+- id: betim
+  name: Betim
+  zone: z_grande_bh
+  municipality: betim
+  type: city
+  latitude: -19.9697
+  longitude: -44.2075
+  aliases:
+  - betim
+  sample_tier: 2
+  spatial_fit: medio
+  ibge: 3106705
+- id: uberlandia
+  name: Uberlândia
+  zone: z_triangulo
+  municipality: uberlandia
+  type: city
+  latitude: -18.9121
+  longitude: -48.2567
+  aliases:
+  - uberlandia
+  - uberlândia
+  sample_tier: 1
+  spatial_fit: alto
+  ibge: 3170206
+- id: uberaba
+  name: Uberaba
+  zone: z_triangulo
+  municipality: uberaba
+  type: city
+  latitude: -19.7487
+  longitude: -47.9509
+  aliases:
+  - uberaba
+  sample_tier: 2
+  spatial_fit: medio
+  ibge: 3170107
+- id: araguari
+  name: Araguari
+  zone: z_triangulo
+  municipality: araguari
+  type: city
+  latitude: -18.6442
+  longitude: -48.1973
+  aliases:
+  - araguari
+  sample_tier: 2
+  spatial_fit: medio
+  ibge: 3103504
+- id: juiz_de_fora
+  name: Juiz de Fora
+  zone: z_zona_da_mata
+  municipality: juiz_de_fora
+  type: city
+  latitude: -21.7577
+  longitude: -43.3444
+  aliases:
+  - juiz de fora
+  sample_tier: 1
+  spatial_fit: alto
+  ibge: 3136702
+- id: vicosa
+  name: Viçosa
+  zone: z_zona_da_mata
+  municipality: vicosa
+  type: city
+  latitude: -20.7536
+  longitude: -42.8815
+  aliases:
+  - vicosa
+  - viçosa
+  sample_tier: 2
+  spatial_fit: medio
+  ibge: 3171303
+- id: muriae
+  name: Muriaé
+  zone: z_zona_da_mata
+  municipality: muriae
+  type: city
+  latitude: -21.128
+  longitude: -42.3704
+  aliases:
+  - muriae
+  - muriaé
+  sample_tier: 2
+  spatial_fit: medio
+  ibge: 3143906
+- id: pocos_de_caldas
+  name: Poços de Caldas
+  zone: z_sul_de_minas
+  municipality: pocos_de_caldas
+  type: city
+  latitude: -21.7864
+  longitude: -46.5681
+  aliases:
+  - pocos de caldas
+  - poços de caldas
+  sample_tier: 1
+  spatial_fit: alto
+  ibge: 3151800
+- id: varginha
+  name: Varginha
+  zone: z_sul_de_minas
+  municipality: varginha
+  type: city
+  latitude: -21.5565
+  longitude: -45.4339
+  aliases:
+  - varginha
+  sample_tier: 2
+  spatial_fit: medio
+  ibge: 3170701
+- id: pouso_alegre
+  name: Pouso Alegre
+  zone: z_sul_de_minas
+  municipality: pouso_alegre
+  type: city
+  latitude: -22.2309
+  longitude: -45.9361
+  aliases:
+  - pouso alegre
+  sample_tier: 2
+  spatial_fit: medio
+  ibge: 3152501
+- id: montes_claros
+  name: Montes Claros
+  zone: z_norte
+  municipality: montes_claros
+  type: city
+  latitude: -16.7306
+  longitude: -43.8708
+  aliases:
+  - montes claros
+  sample_tier: 1
+  spatial_fit: alto
+  ibge: 3143302
+- id: janauba
+  name: Janaúba
+  zone: z_norte
+  municipality: janauba
+  type: city
+  latitude: -15.7984
+  longitude: -43.3071
+  aliases:
+  - janauba
+  - janaúba
+  sample_tier: 2
+  spatial_fit: medio
+  ibge: 3135100
+- id: pirapora
+  name: Pirapora
+  zone: z_norte
+  municipality: pirapora
+  type: city
+  latitude: -17.3514
+  longitude: -44.9483
+  aliases:
+  - pirapora
+  sample_tier: 2
+  spatial_fit: medio
+  ibge: 3151206
+- id: governador_valadares
+  name: Governador Valadares
+  zone: z_vale_do_rio_doce
+  municipality: governador_valadares
+  type: city
+  latitude: -18.8584
+  longitude: -41.945
+  aliases:
+  - governador valadares
+  sample_tier: 1
+  spatial_fit: alto
+  ibge: 3127701
+- id: ipatinga
+  name: Ipatinga
+  zone: z_vale_do_rio_doce
+  municipality: ipatinga
+  type: city
+  latitude: -19.4792
+  longitude: -42.5278
+  aliases:
+  - ipatinga
+  sample_tier: 2
+  spatial_fit: medio
+  ibge: 3131307
+- id: caratinga
+  name: Caratinga
+  zone: z_vale_do_rio_doce
+  municipality: caratinga
+  type: city
+  latitude: -19.7902
+  longitude: -42.14
+  aliases:
+  - caratinga
+  sample_tier: 2
+  spatial_fit: medio
+  ibge: 3113404
+- id: teofilo_otoni
+  name: Teófilo Otoni
+  zone: z_jequitinhonha_e_mucuri
+  municipality: teofilo_otoni
+  type: city
+  latitude: -17.8647
+  longitude: -41.5082
+  aliases:
+  - teofilo otoni
+  - teófilo otoni
+  sample_tier: 1
+  spatial_fit: alto
+  ibge: 3168606
+- id: aracuai
+  name: Araçuaí
+  zone: z_jequitinhonha_e_mucuri
+  municipality: aracuai
+  type: city
+  latitude: -16.8551
+  longitude: -42.0618
+  aliases:
+  - aracuai
+  - araçuaí
+  sample_tier: 2
+  spatial_fit: medio
+  ibge: 3103405
+- id: diamantina
+  name: Diamantina
+  zone: z_jequitinhonha_e_mucuri
+  municipality: diamantina
+  type: city
+  latitude: -18.2448
+  longitude: -43.5973
+  aliases:
+  - diamantina
+  sample_tier: 2
+  spatial_fit: medio
+  ibge: 3121605
+- id: divinopolis
+  name: Divinópolis
+  zone: z_centro_oeste_e_alto_paranaiba
+  municipality: divinopolis
+  type: city
+  latitude: -20.1703
+  longitude: -44.9109
+  aliases:
+  - divinopolis
+  - divinópolis
+  sample_tier: 1
+  spatial_fit: alto
+  ibge: 3122306
+- id: patos_de_minas
+  name: Patos de Minas
+  zone: z_centro_oeste_e_alto_paranaiba
+  municipality: patos_de_minas
+  type: city
+  latitude: -18.6044
+  longitude: -46.5096
+  aliases:
+  - patos de minas
+  sample_tier: 2
+  spatial_fit: medio
+  ibge: 3148004
+- id: araxa
+  name: Araxá
+  zone: z_centro_oeste_e_alto_paranaiba
+  municipality: araxa
+  type: city
+  latitude: -19.5984
+  longitude: -46.9491
+  aliases:
+  - araxa
+  - araxá
+  sample_tier: 2
+  spatial_fit: medio
+  ibge: 3104007
+points_of_interest: {}
+ambiguous: {}

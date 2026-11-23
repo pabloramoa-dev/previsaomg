@@ -1,0 +1,43 @@
+# EXEMPLO de ALERTA de tempo em dupla. Copie, troque os dados e dispare o
+# workflow "Comunicado em dupla". Só use números de fonte oficial (INMET,
+# Defesa Civil, Cemaden) e escreva a fonte em `fonte:`.
+tipo: alerta
+apresenta: bia                 # quem abre e faz o CTA; o outro acompanha
+validade: "2026-11-18T23:59"   # depois disso não renderiza nem publica
+titulo: "ALERTA DE TEMPESTADE"
+etiquetas: ["AVISO DO INMET", "HOJE · ATÉ 23H59"]
+fonte: "INMET — aviso amarelo de tempestade (perigo potencial)"
+ticker: ["CHUVA ATÉ 30 MM/H", "RAJADAS ATÉ 60 KM/H", "POSSIBILIDADE DE GRANIZO", "DEFESA CIVIL 199"]
+falas:
+  - cena: abertura
+    fala: "Atenção! O Inmet emitiu alerta de tempestade, com possibilidade de granizo."
+  - cena: alerta
+    titulo: "TEMPESTADE COM GRANIZO"
+    detalhe: "Cidade A · Cidade B · Cidade C"
+    fala: "Valeu, Bia. O aviso vale até as 23h59 de hoje para a Cidade A, a Cidade B e a Cidade C."
+  - cena: numero
+    numero: "30 mm/h"
+    sub: "CHUVA FORTE"
+    local: "ATÉ 50 MM NO DIA"
+    fala: "A chuva pode chegar a 30 milímetros por hora, e até 50 no dia."
+  - cena: numero
+    icone: vento
+    numero: "60 km/h"
+    sub: "RAJADAS DE VENTO"
+    local: "ENTRE 40 E 60 KM/H"
+    fala: "E as rajadas de vento podem ficar entre 40 e 60 quilômetros por hora."
+  - cena: frase
+    fala: "Durante o temporal, não fique embaixo de árvores nem estacione perto de placas e torres."
+  - cena: frase
+    continua: true
+    fala: "Em emergência, ligue 199 para a Defesa Civil ou 193 para os Bombeiros."
+  - cena: cta
+    chamada: "MANDE ESTE ALERTA"
+    sub: "{arroba} · aviso do Inmet"
+    fala: "Manda esse alerta pra quem mora na região."
+legenda: |
+  ⚠️ ALERTA DE TEMPESTADE — possibilidade de granizo até as 23h59 de hoje.
+  🌧️ Chuva de até 30 mm/h (até 50 mm no dia)
+  🌬️ Rajadas de 40 a 60 km/h
+  Defesa Civil: 199 · Bombeiros: 193
+  Manda pra quem mora na região! {arroba}

@@ -1,0 +1,92 @@
+"""Seleção de pontos e montagem do quadro de previsão."""
+from __future__ import annotations
+
+import math
+from datetime import date
+from typing import Any
+
+from .. import estado
+
+MINIMO = 6
+
+def _regioes():
+    """(rótulo na tela, ids preferidos em ordem, zonas aceitas como reserva).
+
+    Vem de config/estado.yaml: é a parte do quadro que muda de estado para estado.
+    """
+    return estado.regioes()
+
+
+def _valido(loc: dict[str, Any]) -> bool:
+    return all(isinstance(loc.get(k), (int, float)) and math.isfinite(loc[k])
+               for k in ('min_c', 'max_c'))
+
+
+def _linha(nome: str, loc: dict[str, Any], regiao: str | None) -> dict[str, Any]:
+    row = {'nome': nome, 'min': loc['min_c'], 'max': loc['max_c'],
+           'id': loc.get('id'), 'regiao': regiao}
+    for source, target in (('rain_probability_pct', 'prob_chuva'),
+                           ('rain_mm', 'chuva_mm'),
+                           ('wind_gust_max_kmh', 'vento_kmh'),
+                           ('wind_max_kmh', 'vento_medio_kmh')):
+        val = loc.get(source)
+        if isinstance(val, (float, int)) and not isinstance(val, bool) and math.isfinite(val):
+            row[target] = val
+    return row
+
+
+def cinco_regioes(locations: list[dict[str, Any]], minimo: int = MINIMO, *, data_previsao: str | None = None) -> list[dict[str, Any]]:
+    """Linhas do cartão: seis regiões fixas, com complemento se faltar alguma.
+
+    O nome da função foi mantido para não quebrar os importadores existentes.
+    """
+    validos = [l for l in locations if _valido(l)]
+    por_id = {l.get('id'): l for l in validos}
+    usados: set[str] = set()
+    linhas: list[dict[str, Any]] = []
+    for rotulo, ids, zonas in _regioes():
+        minas = estado.regiao_id() == 'estado_mg'
+        if minas and data_previsao and ids:
+            indice = date.fromisoformat(data_previsao).toordinal() % len(ids)
+            ids = ids[indice:] + ids[:indice]
+        escolhido = next((por_id[i] for i in ids if i in por_id and i not in usados), None)
+        if escolhido is None and zonas:
+            escolhido = next((l for l in validos if l.get('zone') in zonas
+                              and l.get('id') not in usados), None)
+        if escolhido is not None:
+            usados.add(escolhido.get('id'))
+            linhas.append(_linha(escolhido["name"] if minas else rotulo, escolhido, rotulo))
+    if estado.regiao_id() == 'estado_mg':
+        return linhas
+    for loc in validos:
+        if len(linhas) >= minimo:
+            break
+        if loc.get('id') in usados:
+            continue
+        usados.add(loc.get('id'))
+        linhas.append(_linha(loc['name'], loc, None))
+    return linhas
+
+
+def faltando(linhas: list[dict[str, Any]]) -> list[str]:
+    """Regiões obrigatórias que não entraram (para o log do render)."""
+    presentes = {l['regiao'] for l in linhas}
+    return [r for r, _, _ in _regioes() if r not in presentes]
+
+
+def fala_resumo(linhas: list[dict[str, Any]], quando: str = '') -> str:
+    """Frase curta para o cartão: as regiões e a faixa das máximas.
+
+    Curta de propósito — o Reel tem teto de 40 s (e o roteiro, de ~80
+    palavras) e o cartão já mostra cada número. Ex.: "Niterói, Centro, Zona
+    Sul, Zona Norte, Baixada e Campo Grande: de 27 a 36 graus."
+    """
+    curtos = estado.falado()   # na fala, o nome curto: o cartão já mostra o rótulo
+    nomes = [curtos.get(l['nome'], l['nome']) for l in linhas]
+    lista = nomes[0] if len(nomes) == 1 else ', '.join(nomes[:-1]) + ' e ' + nomes[-1]
+    maximas = [l['max'] for l in linhas]
+    lo, hi = min(maximas), max(maximas)
+    faixa = f'máxima de {lo:g} graus' if lo == hi else f'de {lo:g} a {hi:g} graus'
+    prefixo = f'{quando.strip()}, em ' if quando.strip() else ''
+    texto = f'{prefixo}{lista}: {faixa}.'
+    return texto[0].upper() + texto[1:]

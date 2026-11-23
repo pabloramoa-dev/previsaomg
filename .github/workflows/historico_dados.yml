@@ -1,0 +1,84 @@
+name: Histórico de snapshots (manual)
+
+# Coleta SEM publicação, guardada em data/snapshots/. No canal de origem isto
+# rodava agendado duas vezes por dia e o histórico passou de 200 MB. No modelo
+# é manual e mantém só os 14 snapshots mais recentes: o Reel diário não depende
+# desta pasta.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: canal-historico
+  cancel-in-progress: false
+
+jobs:
+  coletar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+
+      - name: Dependencias
+        run: pip install -r requirements/test.txt
+
+      - name: Isolamento e testes
+        run: |
+          python scripts/isolation_guard.py
+          python -m pytest -q
+
+      - name: Localizar o snapshot anterior
+        id: anterior
+        run: |
+          mkdir -p data/snapshots
+          ULTIMO=$(ls -1 data/snapshots/*.json 2>/dev/null | sort | tail -1 || true)
+          echo "arquivo=$ULTIMO" >> "$GITHUB_OUTPUT"
+          echo "anterior: ${ULTIMO:-nenhum}"
+
+      - name: Coletar e normalizar
+        run: |
+          ARGS=""
+          if [ -n "${{ steps.anterior.outputs.arquivo }}" ]; then
+            ARGS="--previous ${{ steps.anterior.outputs.arquivo }}"
+          fi
+          python -m scripts.collect_live output/snapshot.json --tier 1 $ARGS
+
+      - name: Guardar no historico
+        run: |
+          CARIMBO=$(date -u +%Y-%m-%d-%H%MZ)
+          cp output/snapshot.json "data/snapshots/$CARIMBO.json"
+          ls -1 data/snapshots/*.json | sort | head -n -14 | xargs -r git rm -q --ignore-unmatch
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/snapshots
+          if git diff --cached --quiet; then
+            echo "nada novo para guardar"
+          else
+            git commit -m "Snapshot $CARIMBO"
+            git push
+          fi
+
+      - name: Resumo com o contraste do dia
+        run: |
+          python -m scripts.snapshot_summary output/snapshot.json >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Gerar Stories com o visual aprovado
+        run: python -m src.previsao.render.stories output/snapshot.json output/stories
+
+      - name: Avaliar pautas sem publicar
+        run: python -m scripts.editorial_scan output/snapshot.json
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: snapshot-${{ github.run_id }}
+          path: |
+            output/snapshot.json
+            data/editorial_queue.json
+            output/stories/*.png
+          retention-days: 30
+

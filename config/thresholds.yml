@@ -1,0 +1,16 @@
+thresholds:
+  rain_relevant_mm: 1.0
+  rain_probability_relevant_pct: 45
+  hot_c: 34
+  very_hot_c: 38
+  gust_relevant_kmh: 45
+  regional_temp_contrast_c: 4
+  snapshot_ttl_minutes: 120
+  editorial:
+    story_min: 9
+    reel_min: 14
+    priority_min: 19
+  severe_weather:
+    official_source_required: INMET
+    next_hours: 24
+    accepted_events: [tempestade, granizo, vendaval, chuva_intensa, ciclone]

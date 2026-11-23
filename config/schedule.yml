@@ -1,0 +1,6 @@
+timezone: "America/Sao_Paulo"
+schedule_enabled: false
+slots:
+  weekday_morning: "06:00"
+  night: "18:00"
+  severe_weather_monitor: "11:00"

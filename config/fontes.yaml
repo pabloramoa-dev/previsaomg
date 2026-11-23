@@ -1,0 +1,102 @@
+# Registro de fontes do canal.
+#
+# Arranjo do modelo: PROVEDOR UNICO, a MET Norway. E gratuita, licenca
+# CC BY 4.0 / NLOD, uso comercial permitido, e so exige (1) credito na legenda
+# e (2) User-Agent identificando o projeto. Ela NAO fornece probabilidade de
+# chuva, rajada nem UV para o Brasil: o roteiro fala de volume (mm) e horario.
+#
+# O Open-Meteo continua suportado e desligado. A API gratuita dele e para uso
+# nao comercial; para ligar (e ganhar probabilidade de chuva e rajadas), mude
+# `enabled` para true em open_meteo_forecast — o motor volta a usar os tres
+# modelos, com a met.no como segunda opiniao, como no canal de origem.
+#
+# Toda fonte declara timeout, retries limitados, TTL de cache e politica de
+# fallback. Fonte desligada nao vira dado zero silencioso: entra no snapshot
+# com status "not_collected".
+
+meta:
+  version: 3
+  updated_at: "2026-11-16"
+
+defaults:
+  timeout_seconds: 25
+  retries: 2
+  backoff_seconds: 3
+  cache_ttl_minutes: 30
+
+sources:
+
+  met_no_forecast:
+    layer: previsao
+    enabled: true
+    role: principal
+    endpoint: "https://api.met.no/weatherapi/locationforecast/2.0/compact"
+    user_agent: auto                 # "<handle>/1.0 github.com/<repo>", de estado.yaml
+    timeout_seconds: 20
+    retries: 2
+    cache_ttl_minutes: 30
+    freshness_ttl_minutes: 180       # snapshot mais velho que isso nao publica
+    fallback: none
+    campos_ausentes: [wind_gusts_10m_max, precipitation_probability_max, uv_index_max]
+
+  open_meteo_forecast:
+    layer: previsao
+    enabled: false                   # ver o cabecalho antes de ligar
+    role: opcional
+    endpoint: "https://api.open-meteo.com/v1/forecast"
+    models:
+      primary: icon_seamless
+      secondary: [ecmwf_ifs025, gfs_seamless]
+    resolution_km: 11
+    timeout_seconds: 25
+    retries: 2
+    cache_ttl_minutes: 30
+    freshness_ttl_minutes: 120
+    fallback: secondary_model
+
+  open_meteo_marine:
+    layer: mar
+    enabled: false                   # mesma restricao de uso do Open-Meteo
+    role: opcional
+    endpoint: "https://marine-api.open-meteo.com/v1/marine"
+    timeout_seconds: 25
+    retries: 2
+    cache_ttl_minutes: 60
+    freshness_ttl_minutes: 240
+    fallback: none
+
+  inmet_estacoes:
+    layer: observacao
+    enabled: false                   # ligar apos validar formato e QC das estacoes
+    role: principal
+    endpoint: "https://apitempo.inmet.gov.br"
+    timeout_seconds: 25
+    retries: 1
+    cache_ttl_minutes: 20
+    freshness_ttl_minutes: 180
+    fallback: cemaden_pluviometros
+
+  cemaden_pluviometros:
+    layer: chuva_observada
+    enabled: false
+    role: complementar
+    endpoint: "http://sjc.salvar.cemaden.gov.br"
+    timeout_seconds: 25
+    retries: 1
+    cache_ttl_minutes: 20
+    freshness_ttl_minutes: 180
+    quality_control:
+      max_hourly_mm: 120
+      require_timestamp_utc: true
+    fallback: inmet_estacoes
+
+  eventos_manuais:
+    layer: eventos
+    enabled: true
+    role: fallback_versionado
+    file: "config/eventos_manuais.yaml"
+    requires_expiration: true
+
+# Fontes proibidas como origem meteorologica (nomes de sistemas locais de
+# operacao/mobilidade, se o estado cadastrar algum).
+forbidden_weather_sources: []

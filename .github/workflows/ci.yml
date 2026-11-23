@@ -1,0 +1,19 @@
+name: CI
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements/test.txt
+      - run: python scripts/isolation_guard.py
+      - run: python -m scripts.validar_estado
+      - run: python -m scripts.sincronizar_marca --check
+      - run: python -m pytest -q

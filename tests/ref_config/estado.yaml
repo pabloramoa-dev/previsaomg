@@ -1,0 +1,85 @@
+# Identidade do canal. E o UNICO arquivo, junto com locais.yaml, que muda de um
+# estado para outro. Gerado por scripts/novo_estado.py; pode ser editado a mao.
+# Este e o estado de referencia do modelo (o canal que deu origem ao motor).
+versao: 1
+uf: RJ
+nome: "Rio de Janeiro"
+curto: "Rio"              # como o roteiro chama o lugar
+artigo: "o"               # o / a / os / as / "" -> "no Rio", "na Bahia", "em Minas"
+regiao_id: rio_metropolitano
+marca: "PREVISÃO RJ"
+marca_falada: "Previsão RJ"
+handle: previsaorj        # sem arroba, minusculas
+slogan: "O tempo do Rio para decidir seu dia."
+repo: "pabloramoa-dev/previsao-rj"
+
+fuso_utc: -3              # tem de ser igual ao FUSO_UTC dos workflows
+timezone: "America/Sao_Paulo"
+
+# Ponto fora deste retangulo e erro de cadastro e derruba a carga.
+recorte: {lat_min: -23.15, lat_max: -22.60, lon_min: -43.80, lon_max: -42.95}
+
+litoral: true             # false desliga o formato "vai dar praia" e a coleta de mar
+cenario: rio              # desenho do telao em hyperframes/cenarios.py
+
+titulos:
+  antes_de_sair: "RIO ANTES DE SAIR"
+  amanha_no_estado: "AMANHÃ NO RIO"
+
+apresentadores:
+  bira: {cargo: "TEMPO NO RIO E REGIÃO"}
+  bia: {cargo: "O TEMPO DE AMANHÃ NO RIO"}
+
+hashtags:
+  padrao: "#PrevisaoRJ #RioDeJaneiro #TempoRJ"
+  antes_de_sair: "#PrevisaoRJ #RioDeJaneiro #TempoRJ"
+  chove_onde: "#PrevisaoRJ #ChuvaNoRio #TempoRJ"
+  fim_de_semana: "#PrevisaoRJ #FimDeSemana #RioDeJaneiro"
+  vai_dar_praia: "#PrevisaoRJ #PraiaNoRio #RioDeJaneiro"
+  vai_ao_jogo: "#PrevisaoRJ #RioDeJaneiro #TempoRJ"
+  amanha_no_estado: "#PrevisaoRJ #TempoAmanha #RioDeJaneiro"
+
+legenda:
+  abrangencia: "no Rio, Niterói e Baixada"   # "Seu fim de semana ..."
+  unidade: "bairro"                           # "muda de bairro para bairro"
+
+# As seis linhas do quadro de todo Reel. `ids` em ordem de preferencia;
+# `zonas` e a reserva quando nenhum id preferido veio na coleta.
+regioes:
+  - rotulo: "Niterói"
+    ids: [icarai, niteroi_centro, piratininga, sao_francisco, charitas, camboinhas, itaipu, itacoatiara]
+    zonas: [niteroi_baia, niteroi_oceanica]
+  - rotulo: "Centro do Rio"
+    ids: [centro_rio, lapa, gloria, saude_gamboa]
+    zonas: [centro]
+  - rotulo: "Zona Sul"
+    ids: [copacabana, ipanema, botafogo, flamengo, leblon, urca]
+    zonas: [zona_sul]
+  - rotulo: "Zona Norte"
+    ids: [meier, madureira, iraja, penha, ilha_do_governador]
+    zonas: [zona_norte]
+  - rotulo: "Baixada"
+    ids: [duque_de_caxias, nova_iguacu, sao_joao_de_meriti, belford_roxo, nilopolis, mesquita]
+    zonas: [baixada]
+  - rotulo: "Campo Grande"
+    ids: [campo_grande]
+    zonas: []
+
+# Na fala, o nome curto: o cartao ja mostra o rotulo completo.
+falado:
+  "Centro do Rio": "Centro"
+
+# Lugar que pede artigo. Nome fora das listas fica com "em".
+preposicoes:
+  "na": ["Barra da Tijuca", "Tijuca", "Glória", "Lapa", "Penha", "Urca",
+       "Ilha do Governador", "Freguesia", "Taquara", "Vila Isabel", "Saúde e Gamboa"]
+  "no": ["Centro", "Centro de Niterói", "Méier", "Maracanã", "Flamengo", "Leblon",
+       "Grajaú", "Joá", "Pechincha", "Recreio dos Bandeirantes", "Recreio",
+       "Alto da Boa Vista", "Nilton Santos", "Rio", "Rio de Janeiro"]
+  "nas": ["Barcas - Niterói", "Barcas - Praça XV"]
+  "nos": []
+
+# Gancho hiperlocal por dia da semana de publicacao (0 = segunda). Opcional.
+destaques_semana:
+  - {dias: [0, 3], id: sao_goncalo, onde: "em São Gonçalo", selo: "SÃO GONÇALO"}
+  - {dias: [1, 5], id: icarai, onde: "em Icaraí, Niterói", selo: "ICARAÍ · NITERÓI"}
