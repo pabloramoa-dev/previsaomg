@@ -1,7 +1,7 @@
 name: Monitorar avisos oficiais de Minas Gerais
 on:
   schedule:
-    - cron: '0 14 * * *'
+    - cron: '0 13 * * *'
   workflow_dispatch:
 permissions:
   contents: read
