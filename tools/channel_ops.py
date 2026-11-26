@@ -107,7 +107,7 @@ def collect(root, expected, request=_request, now=None):
     user = user or 'me'
     if not token:
         return {'status':'credentials_missing','measurements':[]}
-    base = os.environ.get('IG_GRAPH_BASE','https://graph.instagram.com/v26.0').rstrip('/')
+    base = os.environ.get('IG_GRAPH_BASE','https://graph.facebook.com/v26.0').rstrip('/')
     account = request(base,user,token,{'fields':'id,username'})
     if (account.get('username') or '').lower().lstrip('@') != expected.lower().lstrip('@'):
         raise ValueError('Conta de métricas não corresponde a este canal')

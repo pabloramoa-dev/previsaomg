@@ -21,7 +21,7 @@ def _cfg():
 
 def base_url(version: str) -> str:
     # Centralizado para permitir regressão controlada de versão/host.
-    return f"https://graph.instagram.com/{version}"
+    return f"https://graph.facebook.com/{version}"
 
 
 def verify_destination() -> dict:
