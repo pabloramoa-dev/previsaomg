@@ -1,1 +1,7 @@
-{"measurements": [], "status": "empty", "errors": [], "updated_at": null, "account": null}
+{
+  "measurements": [],
+  "status": "ok",
+  "errors": [],
+  "updated_at": "2026-11-26T23:53:27.543183+00:00",
+  "account": "previsaomg"
+}
