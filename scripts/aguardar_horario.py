@@ -18,6 +18,14 @@ Uso:
     python -m scripts.aguardar_horario preparar --alvo 06:00 --antes 40
     python -m scripts.aguardar_horario publicar --alvo 06:00
     python -m scripts.aguardar_horario prazo --prazo 10:00      # sai 0/1
+    python -m scripts.aguardar_horario janela --alvo 18:00 --prazo 21:00  # sai 0/1
+
+JANELA DO TURNO. Disparo automático só vale entre ABERTURA (= ALVO - 60 min) e
+PRAZO, na data local em que chegou. O `schedule` do GitHub chega a atrasar
+horas: o cron das 17h35 da noite de ontem pode cair às 00h40 de hoje. Sem o
+limite de baixo, esse disparo viraria "noite de hoje" e ficaria 17 horas
+esperando o preparo (e morreria no timeout). Fora da janela, o job `trava`
+encerra antes de instalar qualquer coisa.
 """
 from __future__ import annotations
 
@@ -66,9 +74,43 @@ def dentro_do_prazo(prazo: str, referencia: datetime | None = None) -> bool:
     return referencia <= momento(prazo, referencia)
 
 
-def esperar(alvo: str, antes_min: int, rotulo: str) -> None:
+ABRE_MIN_PADRAO = 60
+# Rede de segurança: dentro da janela a maior espera é ABRE_MIN - PREPARO_MIN
+# (40 min). Esperar mais que isso é sinal de disparo fora do turno.
+MAX_ESPERA_MIN = 45
+
+
+def janela_do_turno(alvo: str, prazo: str, abre_min: int = ABRE_MIN_PADRAO,
+                    referencia: datetime | None = None) -> tuple[str, datetime, datetime]:
+    """('dentro' | 'cedo' | 'atrasado', abertura, prazo) na data local da referência."""
+    referencia = (referencia or agora()).astimezone(BRT)
+    abertura = momento(alvo, referencia) - timedelta(minutes=abre_min)
+    fim = momento(prazo, referencia)
+    if referencia < abertura:
+        return 'cedo', abertura, fim
+    if referencia > fim:
+        return 'atrasado', abertura, fim
+    return 'dentro', abertura, fim
+
+
+def _resumo(texto: str) -> None:
+    destino = os.environ.get('GITHUB_STEP_SUMMARY')
+    if destino:
+        with open(destino, 'a', encoding='utf-8') as f:
+            f.write(texto)
+
+
+def esperar(alvo: str, antes_min: int, rotulo: str,
+            max_espera_min: int = MAX_ESPERA_MIN) -> None:
     falta = segundos_de_espera(alvo, antes_min)
     marco = momento(alvo, agora()) - timedelta(minutes=antes_min)
+    if falta > max_espera_min * 60:
+        msg = (f'{rotulo}: faltam {falta // 60} min para {marco:%H:%M} '
+               f'(limite {max_espera_min} min). Disparo fora da janela do turno; '
+               'encerrando sem esperar o próximo horário.')
+        print(msg, flush=True)
+        _resumo(f'### Disparo fora da janela\n\n{msg}\n')
+        raise SystemExit(1)
     if falta <= 0:
         print(f'{rotulo}: {marco:%H:%M} já passou (agora {agora():%H:%M}); seguindo.')
         return
@@ -87,7 +129,15 @@ def main() -> None:
     b.add_argument('--alvo', required=True)
     c = sub.add_parser('prazo')
     c.add_argument('--prazo', required=True)
+    d = sub.add_parser('janela')
+    d.add_argument('--alvo', required=True)
+    d.add_argument('--prazo', required=True)
+    d.add_argument('--abre', type=int, default=ABRE_MIN_PADRAO)
     args = p.parse_args()
+    if args.acao == 'janela':
+        estado_, abertura, fim = janela_do_turno(args.alvo, args.prazo, args.abre)
+        print(f'agora {agora():%d/%m %H:%M}, janela {abertura:%H:%M}-{fim:%H:%M}: {estado_}')
+        raise SystemExit(0 if estado_ == 'dentro' else 1)
     if args.acao == 'preparar':
         esperar(args.alvo, args.antes, 'preparo')
     elif args.acao == 'publicar':

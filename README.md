@@ -30,16 +30,20 @@ Dados: [MET Norway](https://api.met.no) (licença CC BY 4.0, crédito em toda le
    `AUTOMATION_ENABLED=false`, `EXPECTED_IG_USERNAME=previsaomg`.
 3. Rodar **CI**, **Coletar dados (sem publicação)** e **Validar estúdio HyperFrames**. Para ensaiar, usar **Reel manual** com publicação desmarcada;
    assistir aos dois MP4 (nomes, preposições, cenário, sigla).
-4. Conta @previsaomg profissional + app da Meta ("API do Instagram com login do
-   Instagram", escopos `instagram_business_basic`, `instagram_business_content_publish`,
-   `instagram_business_manage_insights`).
-5. **Secrets**: `IG_USER_ID`, `IG_ACCESS_TOKEN`, `GH_PAT_SECRETS` (fine-grained, só este
-   repo, Secrets: write).
+4. Conta @previsaomg profissional + app próprio "Previsão MG" na Meta ligado ao BM01
+   (login unificado). Token de **usuário do sistema** do BM01, que
+   não expira, com acesso básico + publicação. Publicação via `graph.facebook.com`.
+5. **Secrets**: `IG_USER_ID`, `IG_ACCESS_TOKEN`. Não há `GH_PAT_SECRETS`: o token do
+   usuário do sistema não é renovado por workflow.
 6. **Health — conexão com a Meta** → `verified` com @previsaomg.
 7. **Reel manual** em modo live, com publicação desmarcada, para validar a coleta e revisar o vídeo.
-8. **Token — renovar IG** uma vez à mão; depois roda sozinho nos dias 1 e 15.
+8. **Token — conferir validade (Meta)** roda nos dias 1 e 15 e só confere, sem revelar,
+   que o token segue válido e sem expiração. Se falhar, gerar novo token do usuário do
+   sistema no BM01 e substituir `IG_ACCESS_TOKEN` (só depois do Health `verified`).
 9. `AUTOMATION_ENABLED=true`.
-10. Opcionalmente, adicionar cron-job.org como disparador redundante. Usar fuso `America/Sao_Paulo`, POST
+10. Disparador externo (recomendado: o `schedule` do GitHub chegou a atrasar 7 h neste
+    repositório). Disparo fora da janela do turno (ALVO-60 min até o PRAZO) encerra na
+    `trava` sem instalar nada. cron-job.org: Usar fuso `America/Sao_Paulo`, POST
     `https://api.github.com/repos/pabloramoa-dev/previsaomg/dispatches`:
     `{"event_type":"reel_manha"}` às 05:35 e `{"event_type":"reel_noite"}` às 17:35.
 

@@ -62,6 +62,8 @@ permissions:
 env:
   ALVO: "18:00"        # gerado: alvo do turno
   PREPARO_MIN: "20"
+  # Disparo automático antes de ALVO - ABRE_MIN é descartado na trava.
+  ABRE_MIN: "60"
   PRAZO: "21:00"
   FUSO_UTC: "-3"       # gerado: igual a fuso_utc de config/estado.yaml
 
@@ -119,18 +121,27 @@ jobs:
                 and str(i.get('published_at', ''))[:10] == hoje
                 and i.get('format') == 'amanha_no_estado']
 
-          # Disparo automático fora do prazo não publica: a previsão do turno
-          # já perdeu o sentido. O disparo manual decide por conta própria.
+          # Disparo automático só vale na JANELA do próprio turno (ALVO-60 min
+          # até o PRAZO, na data local em que chegou). O schedule do GitHub
+          # chega horas atrasado: um cron da noite de ontem que cai às 00h40
+          # não pode virar a noite de hoje e ficar esperando 17 h pelo preparo.
+          # Fora da janela encerra aqui, antes de instalar dependências.
+          # O disparo manual decide por conta própria.
+          import sys
+          sys.path.insert(0, '.')
+          from scripts.aguardar_horario import janela_do_turno
           agora = datetime.datetime.now(
               datetime.timezone(datetime.timedelta(hours=int(os.environ['FUSO_UTC']))))
-          hh, mm = (int(x) for x in os.environ['PRAZO'].split(':'))
-          atrasado = not manual and agora > agora.replace(
-              hour=hh, minute=mm, second=0, microsecond=0)
+          situacao, abertura, fim = janela_do_turno(
+              os.environ['ALVO'], os.environ['PRAZO'], int(os.environ['ABRE_MIN']), agora)
+          atrasado = not manual and situacao == 'atrasado'
+          cedo = not manual and situacao == 'cedo'
 
-          pular = 'sim' if ((ja and not ignorar) or atrasado) else 'nao'
+          pular = 'sim' if ((ja and not ignorar) or atrasado or cedo) else 'nao'
           print(f'hoje={hoje} agora={agora:%H:%M} pular={pular} '
                 f'publicar={publicar} publicacoes_hoje={len(ja)} '
-                f'fora_do_prazo={atrasado}')
+                f'janela={abertura:%H:%M}-{fim:%H:%M} situacao={situacao} '
+                f'fora_do_prazo={atrasado} cedo={cedo}')
           with open(os.environ['GITHUB_OUTPUT'], 'a', encoding='utf-8') as saida:
               saida.write(f'pular={pular}\n')
               saida.write(f'publicar={str(publicar).lower()}\n')
@@ -141,6 +152,14 @@ jobs:
                   f'### Disparo às {agora:%H:%M}, depois do prazo ({os.environ["PRAZO"]})\n\n'
                   'Nada foi preparado nem publicado. Para publicar mesmo assim, '
                   'use o botão "Run workflow".\n', encoding='utf-8')
+          elif cedo:
+              resumo.write_text(
+                  f'### Disparo às {agora:%d/%m %H:%M}, antes da janela do turno '
+                  f'({abertura:%H:%M}–{fim:%H:%M})\n\n'
+                  'Provável agendamento atrasado do turno anterior. Nada foi '
+                  'instalado, preparado nem publicado; o job não espera o '
+                  'próximo horário. O próximo disparo do turno cuida do Reel.\n',
+                  encoding='utf-8')
           elif pular == 'sim':
               resumo.write_text(
                   f'### Reel da noite de {hoje} já publicado\n\n'
