@@ -244,11 +244,19 @@ def test_rodizio_de_retencao_e_engajamento():
         quando = 'amanhã' if i % 2 else 'hoje'
         alvo = pub + timedelta(days=i % 2)
         fala = gancho_rotativo(pontos, alvo, quando, canal='teste')
+        cta = engajamento_rotativo(alvo, quando, canal='teste')
         assert quando in fala.lower() and len(fala.split()) <= 12
+        assert fala == gancho_rotativo(pontos, alvo, quando, canal='teste')
+        if quando == 'amanhã':
+            # Noite: abertura simples e pedido de compartilhamento fixos
+            # (referência editorial de 27/11/2026).
+            assert fala == 'Amanhã, o tempo em Minas Gerais fica assim.'
+            assert cta == 'Manda pra quem vai sair amanhã.'
+            continue
         assert 'Cidade A' in fala or 'Cidade B' in fala
         assert not any(x in fala.lower() for x in ('alerta', 'rajada', 'chuva forte'))
-        assert fala == gancho_rotativo(pontos, alvo, quando, canal='teste')
         ganchos.add(fala)
-        ctas.add(engajamento_rotativo(alvo, quando, canal='teste'))
-    assert len(ganchos) >= 12
-    assert len(ctas) >= 8
+        ctas.add(cta)
+    # Manhã continua em rodízio.
+    assert len(ganchos) >= 10, len(ganchos)
+    assert len(ctas) >= 6, len(ctas)
