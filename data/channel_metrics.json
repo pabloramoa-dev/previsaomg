@@ -1,7 +1,12 @@
 {
   "measurements": [],
-  "status": "ok",
-  "errors": [],
-  "updated_at": "2026-11-26T23:53:27.543183+00:00",
+  "status": "partial",
+  "errors": [
+    {
+      "media_id": "18136339861863504",
+      "error": "HTTPError"
+    }
+  ],
+  "updated_at": "2026-11-27T23:29:53.923113+00:00",
   "account": "previsaomg"
 }
