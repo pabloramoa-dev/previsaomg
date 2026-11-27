@@ -350,6 +350,22 @@ jobs:
             --dedupe-key "${{ steps.pauta.outputs.dedupe_key }}" \
             --publish
 
+      # Bira de manhã: o mesmo MP4 do Reel vai também para os Stories.
+      # Falha aqui não desfaz o Reel; o registro impede Story repetido.
+      - name: Publicar o mesmo vídeo nos Stories
+        if: ${{ success() && steps.pauta.outputs.seguir == 'sim' && needs.trava.outputs.publicar == 'true' }}
+        continue-on-error: true
+        env:
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          META_GRAPH_VERSION: ${{ vars.META_GRAPH_VERSION || 'v26.0' }}
+          EXPECTED_IG_USERNAME: ${{ vars.EXPECTED_IG_USERNAME }}
+        run: |
+          python -m scripts.publicar_story \
+            --video-url "${{ steps.media.outputs.url }}" \
+            --chave "${{ steps.pauta.outputs.dedupe_key }}" \
+            --registro data/stories.json
+
       # A fila é o estado do publicador: precisa ser gravada mesmo quando a
       # publicação falhou no meio, senão o item fica 'publishing' só no runner.
       - name: Persistir a fila no repositório
@@ -360,6 +376,7 @@ jobs:
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/editorial_queue.json
+          if [ -f data/stories.json ]; then git add data/stories.json; fi
           if git diff --cached --quiet; then
             echo "fila sem mudanca"
             exit 0

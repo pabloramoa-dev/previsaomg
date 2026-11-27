@@ -53,6 +53,15 @@ def create_reel(video_url: str, caption: str) -> str:
     return r.json()["id"]
 
 
+def create_story(video_url: str) -> str:
+    """Container de Story com o mesmo MP4 do Reel (Stories não têm legenda)."""
+    user, token, version, _ = _cfg()
+    r = requests.post(f"{base_url(version)}/{user}/media", data={
+        "media_type": "STORIES", "video_url": video_url, "access_token": token}, timeout=30)
+    r.raise_for_status()
+    return r.json()["id"]
+
+
 def wait_ready(container_id: str, timeout_s: int = 300) -> None:
     _, token, version, _ = _cfg()
     end = time.time() + timeout_s
