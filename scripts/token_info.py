@@ -40,8 +40,13 @@ def consultar(token: str, versao: str) -> dict:
         return {'status': 'inconclusivo', 'motivo': f'http_{r.status_code}'}
     if 'error' in corpo:
         e = corpo['error']
-        return {'status': 'inconclusivo', 'motivo': f"meta_{e.get('code')}",
+        info = {'status': 'inconclusivo', 'motivo': f"meta_{e.get('code')}",
                 'mensagem': str(e.get('message', ''))[:160]}
+        # Token de usuário do sistema não é "dono/desenvolvedor" do app e não
+        # consegue se auto-inspecionar no /debug_token. Então descreve o dono
+        # do token (/me) e as permissões concedidas, que não são segredo.
+        info.update(identidade(token, versao))
+        return info
     d = corpo.get('data') or {}
     expira = int(d.get('expires_at') or 0)
     acesso = int(d.get('data_access_expires_at') or 0)
@@ -60,6 +65,24 @@ def consultar(token: str, versao: str) -> dict:
     if acesso and acesso - agora < DIAS_AVISO * 86400:
         info['alerta'] = 'acesso_a_dados_expira_em_breve'
     return info
+
+
+def identidade(token: str, versao: str) -> dict:
+    base = f'https://graph.facebook.com/{versao}'
+    saida: dict = {}
+    try:
+        me = requests.get(f'{base}/me', params={'fields': 'id,name', 'access_token': token},
+                          timeout=30).json()
+        if 'error' not in me:
+            saida['dono_do_token'] = me.get('name')
+        perms = requests.get(f'{base}/me/permissions', params={'access_token': token},
+                             timeout=30).json()
+        if 'error' not in perms:
+            saida['permissoes_concedidas'] = sorted(
+                p['permission'] for p in perms.get('data', []) if p.get('status') == 'granted')
+    except (requests.RequestException, ValueError) as erro:
+        saida['identidade'] = f'inconclusivo:{type(erro).__name__}'
+    return saida
 
 
 def main() -> None:
