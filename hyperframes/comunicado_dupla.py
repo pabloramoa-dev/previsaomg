@@ -160,7 +160,7 @@ def narrar(bat, falante, work):
     blocos, segs, t = [], [], 0.0
     for i, (b, quem) in enumerate(zip(bat, falante)):
         pr = PRESETS[quem]
-        s, sr = k.create(b['fala'], voice=KK.estilo(k, pr['voice']), speed=pr['speed'], lang='pt-br')
+        s, sr = k.create(KK.normalizar_horario_para_voz(b['fala']), voice=KK.estilo(k, pr['voice']), speed=pr['speed'], lang='pt-br')
         s = KK.resample_44100(np.asarray(s, dtype=np.float32), sr)
         prox = falante[i + 1] if i + 1 < len(bat) else quem
         n_gap = int((GAP_TROCA if prox != quem else GAP_MESMO) * SR)
