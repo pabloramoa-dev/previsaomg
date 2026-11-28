@@ -783,7 +783,11 @@ html, body {{ width: 1080px; height: 1920px; overflow: hidden; background: {NAVY
   tl.fromTo("#hud-ponto", {{ opacity: 1 }}, {{ opacity: 0.15, duration: 0.45, repeat: nPisca * 2 - 1, yoyo: true, ease: "steps(1)" }}, 0);
   tl.fromTo("#hud", {{ y: -140 }}, {{ y: 0, duration: 0.4, ease: "back.out(1.6)" }}, 0);
   var trilho = document.getElementById("tk-trilho");
-  tl.fromTo(trilho, {{ x: 0 }}, {{ x: -trilho.scrollWidth / 2, duration: D.dur, ease: "none" }}, 0);
+  // Limite de leitura: nunca acelerar o ticker para encaixar textos longos.
+  // 100 px/s no canvas de 1080 px; manter a timeline finita e linear.
+  var tickerMaxPxPorSegundo = 100;
+  var tickerDistancia = Math.min(trilho.scrollWidth / 2, tickerMaxPxPorSegundo * D.dur);
+  tl.fromTo(trilho, {{ x: 0 }}, {{ x: -tickerDistancia, duration: D.dur, ease: "none" }}, 0);
 
   // 9) LOWER THIRD — entra e sai
   tl.fromTo("#lt-nome", {{ xPercent: -120, opacity: 0 }}, {{ xPercent: 0, opacity: 1, duration: 0.35, ease: "power3.out" }}, 0.5);
