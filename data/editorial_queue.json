@@ -2653,7 +2653,7 @@
     "created_at": "2026-11-27T17:40:14.899495-03:00",
     "expires_at": "2026-11-27T19:40:14-03:00",
     "vetoes": [],
-    "status": "ready",
+    "status": "expired",
     "confidence": 78.4,
     "language": "forecast"
   },
@@ -2711,7 +2711,7 @@
     "created_at": "2026-11-27T17:40:14.899495-03:00",
     "expires_at": "2026-11-27T19:40:14-03:00",
     "vetoes": [],
-    "status": "ready",
+    "status": "expired",
     "confidence": 78.4,
     "language": "forecast"
   },
@@ -2787,7 +2787,7 @@
     "created_at": "2026-11-27T17:40:14.899495-03:00",
     "expires_at": "2026-11-27T19:40:14-03:00",
     "vetoes": [],
-    "status": "ready",
+    "status": "expired",
     "confidence": 78.4,
     "language": "forecast"
   },
@@ -2958,6 +2958,984 @@
     "dedupe_key": "8fdeae9e9341eed7078291700b800d6d2dd52bcebc1a93b48948e302ed581b48",
     "created_at": "2026-11-27T17:40:14.899495-03:00",
     "expires_at": "2026-11-27T19:40:14-03:00",
+    "vetoes": [],
+    "status": "expired",
+    "confidence": 78.4,
+    "language": "forecast"
+  },
+  {
+    "format": "fim_de_semana",
+    "topic": "fim_de_semana",
+    "location_ids": [
+      "belo_horizonte",
+      "divinopolis",
+      "governador_valadares",
+      "juiz_de_fora",
+      "montes_claros",
+      "pocos_de_caldas",
+      "teofilo_otoni",
+      "uberlandia",
+      "aracuai",
+      "araguari",
+      "araxa",
+      "betim",
+      "caratinga",
+      "contagem",
+      "diamantina",
+      "ipatinga",
+      "janauba",
+      "muriae",
+      "patos_de_minas",
+      "pirapora",
+      "pouso_alegre",
+      "uberaba",
+      "varginha",
+      "vicosa"
+    ],
+    "facts": {
+      "belo_horizonte": {
+        "max_c": 25,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "divinopolis": {
+        "max_c": 26,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "governador_valadares": {
+        "max_c": 30,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "juiz_de_fora": {
+        "max_c": 24,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "montes_claros": {
+        "max_c": 29,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "pocos_de_caldas": {
+        "max_c": 25,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "teofilo_otoni": {
+        "max_c": 30,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "uberlandia": {
+        "max_c": 26,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "aracuai": {
+        "max_c": 31,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "araguari": {
+        "max_c": 26,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "araxa": {
+        "max_c": 26,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "betim": {
+        "max_c": 25,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "caratinga": {
+        "max_c": 26,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "contagem": {
+        "max_c": 24,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "diamantina": {
+        "max_c": 25,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "ipatinga": {
+        "max_c": 28,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "janauba": {
+        "max_c": 32,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "muriae": {
+        "max_c": 26,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "patos_de_minas": {
+        "max_c": 27,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "pirapora": {
+        "max_c": 30,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "pouso_alegre": {
+        "max_c": 26,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "uberaba": {
+        "max_c": 28,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "varginha": {
+        "max_c": 26,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "vicosa": {
+        "max_c": 24,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      }
+    },
+    "parts": {
+      "utility": 4,
+      "urgency": 3,
+      "contrast": 3,
+      "shareability": 5,
+      "novelty": 5
+    },
+    "extra": {
+      "dates": [
+        "2026-11-28",
+        "2026-11-29"
+      ],
+      "forecast": {
+        "2026-11-28": [
+          {
+            "id": "belo_horizonte",
+            "max_c": 25,
+            "rain_probability_pct": null,
+            "wind_gust_max_kmh": null
+          },
+          {
+            "id": "divinopolis",
+            "max_c": 26,
+            "rain_probability_pct": null,
+            "wind_gust_max_kmh": null
+          },
+          {
+            "id": "governador_valadares",
+            "max_c": 30,
+            "rain_probability_pct": null,
+            "wind_gust_max_kmh": null
+          },
+          {
+            "id": "juiz_de_fora",
+            "max_c": 24,
+            "rain_probability_pct": null,
+            "wind_gust_max_kmh": null
+          },
+          {
+            "id": "montes_claros",
+            "max_c": 29,
+            "rain_probability_pct": null,
+            "wind_gust_max_kmh": null
+          },
+          {
+            "id": "pocos_de_caldas",
+            "max_c": 25,
+            "rain_probability_pct": null,
+            "wind_gust_max_kmh": null
+          },
+          {
+            "id": "teofilo_otoni",
+            "max_c": 30,
+            "rain_probability_pct": null,
+            "wind_gust_max_kmh": null
+          },
+          {
+            "id": "uberlandia",
+            "max_c": 26,
+            "rain_probability_pct": null,
+            "wind_gust_max_kmh": null
+          },
+          {
+            "id": "aracuai",
+            "max_c": 31,
+            "rain_probability_pct": null,
+            "wind_gust_max_kmh": null
+          },
+          {
+            "id": "araguari",
+            "max_c": 26,
+            "rain_probability_pct": null,
+            "wind_gust_max_kmh": null
+          },
+          {
+            "id": "araxa",
+            "max_c": 26,
+            "rain_probability_pct": null,
+            "wind_gust_max_kmh": null
+          },
+          {
+            "id": "betim",
+            "max_c": 25,
+            "rain_probability_pct": null,
+            "wind_gust_max_kmh": null
+          },
+          {
+            "id": "caratinga",
+            "max_c": 26,
+            "rain_probability_pct": null,
+            "wind_gust_max_kmh": null
+          },
+          {
+            "id": "contagem",
+            "max_c": 24,
+            "rain_probability_pct": null,
+            "wind_gust_max_kmh": null
+          },
+          {
+            "id": "diamantina",
+            "max_c": 25,
+            "rain_probability_pct": null,
+            "wind_gust_max_kmh": null
+          },
+          {
+            "id": "ipatinga",
+            "max_c": 28,
+            "rain_probability_pct": null,
+            "wind_gust_max_kmh": null
+          },
+          {
+            "id": "janauba",
+            "max_c": 32,
+            "rain_probability_pct": null,
+            "wind_gust_max_kmh": null
+          },
+          {
+            "id": "muriae",
+            "max_c": 26,
+            "rain_probability_pct": null,
+            "wind_gust_max_kmh": null
+          },
+          {
+            "id": "patos_de_minas",
+            "max_c": 27,
+            "rain_probability_pct": null,
+            "wind_gust_max_kmh": null
+          },
+          {
+            "id": "pirapora",
+            "max_c": 30,
+            "rain_probability_pct": null,
+            "wind_gust_max_kmh": null
+          },
+          {
+            "id": "pouso_alegre",
+            "max_c": 26,
+            "rain_probability_pct": null,
+            "wind_gust_max_kmh": null
+          },
+          {
+            "id": "uberaba",
+            "max_c": 28,
+            "rain_probability_pct": null,
+            "wind_gust_max_kmh": null
+          },
+          {
+            "id": "varginha",
+            "max_c": 26,
+            "rain_probability_pct": null,
+            "wind_gust_max_kmh": null
+          },
+          {
+            "id": "vicosa",
+            "max_c": 24,
+            "rain_probability_pct": null,
+            "wind_gust_max_kmh": null
+          }
+        ],
+        "2026-11-29": [
+          {
+            "id": "belo_horizonte",
+            "max_c": 29,
+            "rain_probability_pct": null,
+            "wind_gust_max_kmh": null
+          },
+          {
+            "id": "divinopolis",
+            "max_c": 29,
+            "rain_probability_pct": null,
+            "wind_gust_max_kmh": null
+          },
+          {
+            "id": "governador_valadares",
+            "max_c": 32,
+            "rain_probability_pct": null,
+            "wind_gust_max_kmh": null
+          },
+          {
+            "id": "juiz_de_fora",
+            "max_c": 27,
+            "rain_probability_pct": null,
+            "wind_gust_max_kmh": null
+          },
+          {
+            "id": "montes_claros",
+            "max_c": 30,
+            "rain_probability_pct": null,
+            "wind_gust_max_kmh": null
+          },
+          {
+            "id": "pocos_de_caldas",
+            "max_c": 25,
+            "rain_probability_pct": null,
+            "wind_gust_max_kmh": null
+          },
+          {
+            "id": "teofilo_otoni",
+            "max_c": 32,
+            "rain_probability_pct": null,
+            "wind_gust_max_kmh": null
+          },
+          {
+            "id": "uberlandia",
+            "max_c": 29,
+            "rain_probability_pct": null,
+            "wind_gust_max_kmh": null
+          },
+          {
+            "id": "aracuai",
+            "max_c": 34,
+            "rain_probability_pct": null,
+            "wind_gust_max_kmh": null
+          },
+          {
+            "id": "araguari",
+            "max_c": 29,
+            "rain_probability_pct": null,
+            "wind_gust_max_kmh": null
+          },
+          {
+            "id": "araxa",
+            "max_c": 28,
+            "rain_probability_pct": null,
+            "wind_gust_max_kmh": null
+          },
+          {
+            "id": "betim",
+            "max_c": 29,
+            "rain_probability_pct": null,
+            "wind_gust_max_kmh": null
+          },
+          {
+            "id": "caratinga",
+            "max_c": 29,
+            "rain_probability_pct": null,
+            "wind_gust_max_kmh": null
+          },
+          {
+            "id": "contagem",
+            "max_c": 29,
+            "rain_probability_pct": null,
+            "wind_gust_max_kmh": null
+          },
+          {
+            "id": "diamantina",
+            "max_c": 27,
+            "rain_probability_pct": null,
+            "wind_gust_max_kmh": null
+          },
+          {
+            "id": "ipatinga",
+            "max_c": 32,
+            "rain_probability_pct": null,
+            "wind_gust_max_kmh": null
+          },
+          {
+            "id": "janauba",
+            "max_c": 32,
+            "rain_probability_pct": null,
+            "wind_gust_max_kmh": null
+          },
+          {
+            "id": "muriae",
+            "max_c": 30,
+            "rain_probability_pct": null,
+            "wind_gust_max_kmh": null
+          },
+          {
+            "id": "patos_de_minas",
+            "max_c": 29,
+            "rain_probability_pct": null,
+            "wind_gust_max_kmh": null
+          },
+          {
+            "id": "pirapora",
+            "max_c": 33,
+            "rain_probability_pct": null,
+            "wind_gust_max_kmh": null
+          },
+          {
+            "id": "pouso_alegre",
+            "max_c": 24,
+            "rain_probability_pct": null,
+            "wind_gust_max_kmh": null
+          },
+          {
+            "id": "uberaba",
+            "max_c": 30,
+            "rain_probability_pct": null,
+            "wind_gust_max_kmh": null
+          },
+          {
+            "id": "varginha",
+            "max_c": 28,
+            "rain_probability_pct": null,
+            "wind_gust_max_kmh": null
+          },
+          {
+            "id": "vicosa",
+            "max_c": 28,
+            "rain_probability_pct": null,
+            "wind_gust_max_kmh": null
+          }
+        ]
+      }
+    },
+    "total": 20,
+    "classification": "reel_priority",
+    "turno": "manha",
+    "character": "bira",
+    "hook_key": "13d391090b7402714e3b",
+    "dedupe_key": "1974365ae5930b3b831ad96167d915d8e666f3d559ce50bc774027c4e20240ac",
+    "created_at": "2026-11-28T05:40:16.021064-03:00",
+    "expires_at": "2026-11-28T07:40:15-03:00",
+    "vetoes": [],
+    "status": "ready",
+    "confidence": 78.4,
+    "language": "forecast"
+  },
+  {
+    "format": "amanha_no_estado",
+    "topic": "amanha",
+    "location_ids": [
+      "belo_horizonte",
+      "divinopolis",
+      "governador_valadares",
+      "juiz_de_fora",
+      "montes_claros",
+      "pocos_de_caldas",
+      "teofilo_otoni",
+      "uberlandia",
+      "aracuai",
+      "araguari",
+      "araxa",
+      "betim",
+      "caratinga",
+      "contagem",
+      "diamantina",
+      "ipatinga",
+      "janauba",
+      "muriae",
+      "patos_de_minas",
+      "pirapora",
+      "pouso_alegre",
+      "uberaba",
+      "varginha",
+      "vicosa"
+    ],
+    "facts": {
+      "belo_horizonte": {
+        "max_c": 29,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "divinopolis": {
+        "max_c": 29,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "governador_valadares": {
+        "max_c": 32,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "juiz_de_fora": {
+        "max_c": 27,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "montes_claros": {
+        "max_c": 30,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "pocos_de_caldas": {
+        "max_c": 25,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "teofilo_otoni": {
+        "max_c": 32,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "uberlandia": {
+        "max_c": 29,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "aracuai": {
+        "max_c": 34,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "araguari": {
+        "max_c": 29,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "araxa": {
+        "max_c": 28,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "betim": {
+        "max_c": 29,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "caratinga": {
+        "max_c": 29,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "contagem": {
+        "max_c": 29,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "diamantina": {
+        "max_c": 27,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "ipatinga": {
+        "max_c": 32,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "janauba": {
+        "max_c": 32,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "muriae": {
+        "max_c": 30,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "patos_de_minas": {
+        "max_c": 29,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "pirapora": {
+        "max_c": 33,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "pouso_alegre": {
+        "max_c": 24,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "uberaba": {
+        "max_c": 30,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "varginha": {
+        "max_c": 28,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "vicosa": {
+        "max_c": 28,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      }
+    },
+    "parts": {
+      "utility": 5,
+      "urgency": 3,
+      "contrast": 3,
+      "shareability": 4,
+      "novelty": 3
+    },
+    "extra": {
+      "date": "2026-11-29"
+    },
+    "total": 18,
+    "classification": "reel",
+    "turno": "noite",
+    "character": "bia",
+    "hook_key": "209200509f710641ac94",
+    "dedupe_key": "310b4c700670f0d996b6f532ba58e45105a2a478a6e15dbfab39c1cf5dc5c0aa",
+    "created_at": "2026-11-28T05:40:16.021064-03:00",
+    "expires_at": "2026-11-28T07:40:15-03:00",
+    "vetoes": [],
+    "status": "ready",
+    "confidence": 78.4,
+    "language": "forecast"
+  },
+  {
+    "format": "chove_onde",
+    "topic": "temperatura",
+    "location_ids": [
+      "juiz_de_fora",
+      "janauba"
+    ],
+    "facts": {
+      "juiz_de_fora": {
+        "max_c": 24,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "janauba": {
+        "max_c": 32,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      }
+    },
+    "parts": {
+      "utility": 5,
+      "urgency": 2,
+      "contrast": 5,
+      "shareability": 3,
+      "novelty": 3
+    },
+    "extra": {
+      "contrast": {
+        "spread": 8.0,
+        "threshold": 4,
+        "relevant": true,
+        "crosses_gust_threshold": false,
+        "low": {
+          "id": "juiz_de_fora",
+          "name": "Juiz de Fora",
+          "value": 24.0
+        },
+        "high": {
+          "id": "janauba",
+          "name": "Janaúba",
+          "value": 32.0
+        },
+        "available_locations": 24
+      }
+    },
+    "total": 18,
+    "classification": "reel",
+    "turno": "manha",
+    "character": "bira",
+    "hook_key": "b5d5efdb3a65f961cc8b",
+    "dedupe_key": "af94497e17467c0888c49c96f68c08e98ffa5b0582a188e7e4351a59bd0d811a",
+    "created_at": "2026-11-28T05:40:16.021064-03:00",
+    "expires_at": "2026-11-28T07:40:15-03:00",
+    "vetoes": [],
+    "status": "published",
+    "confidence": 78.4,
+    "language": "forecast",
+    "claimed_at": "2026-11-28T06:00:06-03:00",
+    "published_at": "2026-11-28T06:00:38-03:00",
+    "media_id": "18650049622056340"
+  },
+  {
+    "format": "antes_de_sair",
+    "topic": "resumo",
+    "location_ids": [
+      "belo_horizonte",
+      "divinopolis",
+      "governador_valadares",
+      "juiz_de_fora",
+      "montes_claros",
+      "pocos_de_caldas",
+      "teofilo_otoni",
+      "uberlandia",
+      "aracuai",
+      "araguari",
+      "araxa",
+      "betim",
+      "caratinga",
+      "contagem",
+      "diamantina",
+      "ipatinga",
+      "janauba",
+      "muriae",
+      "patos_de_minas",
+      "pirapora",
+      "pouso_alegre",
+      "uberaba",
+      "varginha",
+      "vicosa"
+    ],
+    "facts": {
+      "belo_horizonte": {
+        "max_c": 25,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "divinopolis": {
+        "max_c": 26,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "governador_valadares": {
+        "max_c": 30,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "juiz_de_fora": {
+        "max_c": 24,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "montes_claros": {
+        "max_c": 29,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "pocos_de_caldas": {
+        "max_c": 25,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "teofilo_otoni": {
+        "max_c": 30,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "uberlandia": {
+        "max_c": 26,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "aracuai": {
+        "max_c": 31,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "araguari": {
+        "max_c": 26,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "araxa": {
+        "max_c": 26,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "betim": {
+        "max_c": 25,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "caratinga": {
+        "max_c": 26,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "contagem": {
+        "max_c": 24,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "diamantina": {
+        "max_c": 25,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "ipatinga": {
+        "max_c": 28,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "janauba": {
+        "max_c": 32,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "muriae": {
+        "max_c": 26,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "patos_de_minas": {
+        "max_c": 27,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "pirapora": {
+        "max_c": 30,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "pouso_alegre": {
+        "max_c": 26,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "uberaba": {
+        "max_c": 28,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "varginha": {
+        "max_c": 26,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "vicosa": {
+        "max_c": 24,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      }
+    },
+    "parts": {
+      "utility": 3,
+      "urgency": 3,
+      "contrast": 3,
+      "shareability": 3,
+      "novelty": 5
+    },
+    "extra": {},
+    "total": 17,
+    "classification": "reel",
+    "turno": "manha",
+    "character": "bira",
+    "hook_key": "105114d6379aa62f3696",
+    "dedupe_key": "716dd70526b2cf6bb7a3e7ed2995ed9f863f1592963fb10a80f53432b5023212",
+    "created_at": "2026-11-28T05:40:16.021064-03:00",
+    "expires_at": "2026-11-28T07:40:15-03:00",
+    "vetoes": [],
+    "status": "ready",
+    "confidence": 78.4,
+    "language": "forecast"
+  },
+  {
+    "format": "chove_onde",
+    "topic": "janela_chuva",
+    "location_ids": [
+      "divinopolis",
+      "juiz_de_fora",
+      "pocos_de_caldas",
+      "uberlandia",
+      "araguari",
+      "araxa",
+      "betim",
+      "contagem",
+      "muriae",
+      "pouso_alegre",
+      "varginha",
+      "vicosa"
+    ],
+    "facts": {
+      "divinopolis": {
+        "max_c": 26,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "juiz_de_fora": {
+        "max_c": 24,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "pocos_de_caldas": {
+        "max_c": 25,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "uberlandia": {
+        "max_c": 26,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "araguari": {
+        "max_c": 26,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "araxa": {
+        "max_c": 26,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "betim": {
+        "max_c": 25,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "contagem": {
+        "max_c": 24,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "muriae": {
+        "max_c": 26,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "pouso_alegre": {
+        "max_c": 26,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "varginha": {
+        "max_c": 26,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      },
+      "vicosa": {
+        "max_c": 24,
+        "rain_probability_pct": null,
+        "wind_gust_max_kmh": null
+      }
+    },
+    "parts": {
+      "utility": 4,
+      "urgency": 4,
+      "contrast": 0,
+      "shareability": 4,
+      "novelty": 5
+    },
+    "extra": {},
+    "total": 17,
+    "classification": "reel",
+    "turno": "manha",
+    "character": "bira",
+    "hook_key": "e7a8d3ad77c4af79e76e",
+    "dedupe_key": "f1042fa181ffcfdcdc5bcaf8345ecdf886281664670b979f6d50d883e0d8925e",
+    "created_at": "2026-11-28T05:40:16.021064-03:00",
+    "expires_at": "2026-11-28T07:40:15-03:00",
     "vetoes": [],
     "status": "ready",
     "confidence": 78.4,
